@@ -1,0 +1,3675 @@
+directive @rest(
+  path: String = "/v2/"
+  method: String = "GET"
+  hidden: Boolean = false
+  tag: String = ""
+) on FIELD_DEFINITION
+
+scalar JSON
+
+scalar JSONObject
+
+scalar Long
+
+scalar GUID
+
+type Query {
+  """
+  Get Session object information
+  """
+  restapiV2__getSessionInfo: JSON
+  """
+  To get the details of a specific user account by username or user id, use this endpoint. At Least one value is needed.  When both are given, user id will be considered to fetch user information
+  """
+  restapiV2__getUser(
+    """
+    Username of the user that you want to query.
+    """
+    name: String
+    """
+    The GUID of the user account to query
+    """
+    id: String
+  ): UserResponse @rest(path: "/v2/user", method: "GET", tag: "User")
+  getRecentlyPinnedPinboard: PinboardDetails
+  """
+  To get the details of a specific group by name or id, use this endpoint.
+  At Least one value needed.  When both are given id will be considered to fetch user information.
+  """
+  restapiV2__getGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+  ): GroupResponse @rest(path: "/v2/group", method: "GET", tag: "Group")
+  """
+  To get details of a specific tag, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
+  """
+  restapiV2__getTag(
+    """
+    Name of the tag
+    """
+    name: String
+    """
+    The GUID of the tag
+    """
+    id: String
+  ): MetadataTagResponse!
+    @rest(path: "/v2/metadata/tag", method: "GET", tag: "Metadata")
+  """
+  To get the name and id of liveboard that is set as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
+  """
+  restapiV2__getHomeLiveboard(
+    """
+    Name of the tag
+    """
+    userName: String
+    """
+    The GUID of the tag
+    """
+    userId: String
+  ): HomeLiveboardResponse!
+    @rest(path: "/v2/metadata/homeliveboard", method: "GET", tag: "Metadata")
+  """
+  To get a list of objects with incomplete metadata, use this endpoint
+  """
+  restapiV2__getIncompleteObjects: JSON!
+  """
+  To get header details for metadata objects, use this endpoint. You can provide as input selective fields to get the data for.
+  """
+  restapiV2__searchObjectHeader(
+    """
+    Array of header field names that need to be included in the header response
+    """
+    outputFields: [String]
+    """
+    The batch offset, starting from where the records should be included in the response. If no input is provided then offset starts from 0. Default: 0
+    """
+    offset: Int = 0
+    """
+    An alternate way to set offset for the starting point of the response.
+
+    The value in offset field will not be considered if batchNumber field has value greater than 0.
+
+    Offset value will be calculated as (batchNumber - 1) * batchSize.
+
+    It is mandatory to provide a value for batchSize with batchNumber.
+
+    Example:
+
+    Assume response has 100 records. Now,  batchNumber is set as 2 and batchSize as 10, then offset value will be 10. So, 10 records starting from 11th record will be considered.
+    """
+    batchNumber: Int
+    """
+    The number of records that should be included in the response starting from offset position. If no input is provided then first page is included in the response.
+    """
+    batchSize: Int = -1
+    """
+    Field based on which the response needs to be ordered.
+    """
+    sortBy: SortBy = DEFAULT
+    """
+    Order in which sortBy should be applied.
+    """
+    sortOrder: SortOrder = DEFAULT
+    """
+    Type of the metadata object being searched.
+    """
+    type: TsObjectGet!
+    """
+    A pattern to match the name of the metadata object. This parameter supports matching case-insensitive strings. For a wildcard match, use %.
+    """
+    namePattern: String
+    """
+    A JSON array containing the GUIDs of the metadata objects that you want to fetch.
+    """
+    fetchId: [String]
+    """
+    A JSON array containing the GUIDs of the metadata objects that you want to skip.
+    """
+    skipId: [String]
+    """
+    When set to true, returns details of the hidden objects, such as a column in a worksheet or a table.
+    """
+    showHidden: Boolean = false
+    """
+    A flag to indicate whether to list only the auto created objects. When no value is provided as input then all objects are returned.
+    """
+    autoCreated: Boolean
+    """
+    A JSON array of objects with user details for which the metadata objects should be considered from the repository
+    If you specify ID or name of user and set the type parameter to USER, the API returns metadata objects associated with the user
+    If you specify ID or name of user group and set the type parameter to USER_GROUP, the API returns metadata objects for all the users mapped to the specified user group.
+    If the id or name parameter is not defined, but the type attribute is set to USER or USER_GROUP, then the API will not return and response.
+    If no input is provided for any field for this object, then the API returns headers for all users.
+    If both name and id is provided, then id will be considered.
+    """
+    accessLevel: [AccessLevelInput]
+    """
+    A JSON array of name or GUID of tags or both. When both are given then id is considered.
+    """
+    tag: [TagNameAndIdInput]
+    """
+    A JSON array of name or GUID of the user or both for whom the object is assigned as favorite. When both are given then id is considered.
+    """
+    favoriteFor: [NameAndIdInput]
+    """
+    A JSON array of name or GUID of the user or both who created the object. When both are given then id is considered
+    """
+    author: [NameAndIdInput]
+    """
+    A JSON array of name or GUID of the user or both who last modified the object. When both are given then id is considered.
+    """
+    lastModifiedBy: [NameAndIdInput]
+  ): JSON
+    @rest(path: "/v2/metadata/header/search", method: "POST", tag: "Metadata")
+  """
+  Use this endpoint to get header details of visualization charts for a given liveboard or answer. At least one of id or name of liveboard or answer is required. When both are given, then id will be considered.
+  """
+  restapiV2__getObjectVisualizationHeader(
+    """
+    The GUID of the liveboard or answer
+    """
+    id: String!
+  ): [JSON]!
+    @rest(path: "/v2/metadata/vizheader", method: "GET", tag: "Metadata")
+  """
+  Use this endpoint to get full details of metadata objects
+  """
+  restapiV2__getObjectDetail(
+    """
+    Type of the metadata object being searched.
+    """
+    type: TsObjectDetailGet!
+    """
+    A JSON array of GUIDs of the objects.
+    """
+    id: [String]!
+  ): JSON @rest(path: "/v2/metadata/detail", method: "GET", tag: "Metadata")
+  """
+  To get header detail of a metadata object, use this endpoint. You can provide as input selective fields to get the data for.
+  """
+  restapiV2__getObjectHeader(
+    """
+    Type of the metadata object being searched.
+    """
+    type: TsObjectGet!
+    """
+    GUID of the metadata object
+    """
+    id: String!
+    """
+    Array of header field names that need to be included in the header response
+    """
+    outputFields: [String]
+  ): JSON @rest(path: "/v2/metadata/header", method: "GET", tag: "Metadata")
+  """
+  Use this endpoint to get full details of metadata objects
+  """
+  restapiV2__searchObjectDetail(
+    """
+    Type of the metadata object being searched.
+    """
+    type: TsObjectDetailGet!
+    """
+    A JSON array of GUIDs of the objects.
+    """
+    id: [String]!
+    """
+    When set to true, returns details of the hidden objects, such as a column in a worksheet or a table.
+    """
+    showHidden: Boolean = false
+    """
+    When set to true, the search assist data associated with a worksheet is not included in the API response. This attribute is applicable only for DATAOBJECT data type.
+    """
+    dropQuestionDetails: Boolean = false
+    """
+    Specify the version to retrieve the objects from. By default, the API returns metadata for all versions of the object.
+    """
+    version: String
+  ): JSON
+    @rest(path: "/v2/metadata/detail/search", method: "POST", tag: "Metadata")
+  """
+  To list all the databases in Falcon, use this endpoint.
+  """
+  restapiV2__getDatabases: [String]!
+  """
+  To list all the schemas in a database in Falcon, use this endpoint.
+  """
+  restapiV2__getSchemas(
+    """
+    Name of the Falcon database
+    """
+    database: String!
+  ): [String]!
+    @rest(path: "/v2/database/schema", method: "GET", tag: "Database")
+  """
+  To list all the tables in a schema of a database in Falcon, use this endpoint.
+  """
+  restapiV2__getTables(
+    """
+    Name of the Falcon database
+    """
+    database: String!
+    """
+    Name of the schema in Falcon database
+    """
+    schema: String!
+  ): [String]! @rest(path: "/v2/database/table", method: "GET", tag: "Database")
+  """
+  Note: This endpoint is applicable only for on-prem deployments.
+
+  To provide details of a table in a schema of a database in Falcon, use this endpoint.
+  """
+  restapiV2__getTableDetails(
+    """
+    Name of the Falcon database
+    """
+    database: String!
+    """
+    Name of the schema in Falcon database
+    """
+    schema: String
+    """
+    Name of the table in Falcon database
+    """
+    table: String!
+  ): JSON
+    @rest(path: "/v2/database/table/detail", method: "GET", tag: "Database")
+  """
+  To get the details of a specific connection use this endpoint
+  """
+  restapiV2__getConnection(
+    """
+    The GUID of the connection to query
+    """
+    id: String!
+  ): ConnectionResponse!
+    @rest(path: "/v2/connection", method: "GET", tag: "Connection")
+  """
+  To get the list of databases for a connection, use this endpoint.
+
+  The response will include databases from the data platform corresponding to the connection id provided.
+  """
+  restapiV2__getConnectionDatabase(
+    """
+    The GUID of the connection
+    """
+    id: String!
+  ): [String]
+    @rest(path: "/v2/connection/database", method: "GET", tag: "Connection")
+  """
+  To programmatically retrieve data from ThoughtSpot using search query string, use this endpoint
+  """
+  restapiV2__searchQueryData(
+    """
+    The offset point, starting from where the records should be included in the response.
+
+    If no input is provided then offset starts from 0.
+    """
+    offset: Int = -1
+    """
+    An alternate way to set offset for the starting point of the response.
+
+    The value in offset field will not be considered if batchNumber field has value greater than 0.
+
+    Offset value will be calculated as (batchNumber - 1) * batchSize.
+
+    It is mandatory to provide a value for batchSize with batchNumber.
+
+    Example:
+
+    Assume response has 100 records. Now,  batchNumber is set as 2 and batchSize as 10, then offset value will be 10. So, 10 records starting from 11th record will be considered.
+    """
+    batchNumber: Int = -1
+    """
+    The number of records that should be included in the response starting from offset position.
+
+    If no input is provided, then all records starting from the value provided in offset is included in the response
+    """
+    batchSize: Int = -1
+    """
+    The data search query string. Example: [revenue] > 1000 [ship mode] = 'air'
+    """
+    queryString: String!
+    """
+    The GUID of the data object, either a worksheet, a view, or a table.
+    """
+    dataObjectId: String!
+    """
+    The format of the data in the response.
+
+    FULL: The response comes in "column":"value" format.
+
+    COMPACT: The response includes only the value of the columns.
+    """
+    formatType: FormatData = COMPACT
+  ): JSON @rest(path: "/v2/data/search", method: "POST", tag: "Data")
+  """
+  To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
+  """
+  restapiV2__liveboardData(
+    """
+    The offset point, starting from where the records should be included in the response.
+
+    If no input is provided then offset starts from 0.
+    """
+    offset: Int = 0
+    """
+    An alternate way to set offset for the starting point of the response.
+
+    The value in offset field will not be considered if batchNumber field has value greater than 0.
+
+    Offset value will be calculated as (batchNumber - 1) * batchSize.
+
+    It is mandatory to provide a value for batchSize with batchNumber.
+
+    Example:
+
+    Assume response has 100 records. Now,  batchNumber is set as 2 and batchSize as 10, then offset value will be 10. So, 10 records starting from 11th record will be considered.
+    """
+    batchNumber: Int = -1
+    """
+    The number of records that should be included in the response starting from offset position.
+
+    If no input is provided, then all records starting from the value provided in offset is included in the response
+    """
+    batchSize: Int = -1
+    """
+    The GUID of the Liveboard
+    """
+    id: String
+    """
+    If you have embedded ThoughtSpot in your host application, and you want to download Liveboard data with unsaved changes then, pass the transient content from the browser fetch request, using the getExportRequestForCurrentPinboard method. For more information, see https://developers.thoughtspot.com/docs/?pageid=liveboard-export-api#transient-pinboard . If value for this field is provided, then id will not be considered.
+    """
+    transientContent: String
+    """
+    A JSON array of GUIDs of the visualizations in the Liveboard.
+    """
+    vizId: [String]
+    """
+    JSON object which contains filter condition to filter the data at the time of data retrieval.
+
+    Example: {"col1":"region","op1":"EQ","val1":"northeast","col2":"date","op2":"BET","val2":["1625126400000","1625126400000"]}
+
+    For more information, see https://developers.thoughtspot.com/docs/?pageid=runtime-filters
+    """
+    runtimeFilter: String
+    """
+    JSON object which provides columns to sort the data at the time of data retrieval.
+
+    Example: {"sortCol1":"region","asc1":true,"sortCol2":"date"}
+
+    For more information, see https://developers.thoughtspot.com/docs/?pageid=runtime-filters.
+    """
+    runtimeSort: String
+    """
+    The format of the data in the response.
+
+    FULL: The response comes in "column":"value" format.
+
+    COMPACT: The response includes only the value of the columns.
+    """
+    formatType: FormatData = COMPACT
+  ): JSON @rest(path: "/v2/data/liveboard", method: "POST", tag: "Data")
+  """
+  To retrieve data related to a Answer from the ThoughtSpot system, you can use this endpoint
+  """
+  restapiV2__answerData(
+    """
+    The offset point, starting from where the records should be included in the response.
+
+    If no input is provided then offset starts from 0.
+    """
+    offset: Int = 0
+    """
+    An alternate way to set offset for the starting point of the response.
+
+    The value in offset field will not be considered if batchNumber field has value greater than 0.
+
+    Offset value will be calculated as (batchNumber - 1) * batchSize.
+
+    It is mandatory to provide a value for batchSize with batchNumber.
+
+    Example:
+
+    Assume response has 100 records. Now,  batchNumber is set as 2 and batchSize as 10, then offset value will be 10. So, 10 records starting from 11th record will be considered.
+    """
+    batchNumber: Int = -1
+    """
+    The number of records that should be included in the response starting from offset position.
+
+    If no input is provided, then all records starting from the value provided in offset is included in the response
+    """
+    batchSize: Int = -1
+    """
+    The GUID of the Answer
+    """
+    id: String!
+    """
+    The format of the data in the response.
+
+    FULL: The response comes in "column":"value" format.
+
+    COMPACT: The response includes only the value of the columns.
+    """
+    formatType: FormatData = COMPACT
+  ): JSON @rest(path: "/v2/data/answer", method: "POST", tag: "Data")
+  """
+  To retrieve the query SQL related to an Answer that is run on the data platform, you can use this endpoint
+  """
+  restapiV2__answerQuerySql(
+    """
+    The GUID of the Answer
+    """
+    id: String!
+  ): AnswerQueryResponse
+    @rest(path: "/v2/data/answer/querysql", method: "GET", tag: "Data")
+  """
+  To retrieve the query SQL related to a Visualization in a Liveboard that is run on the data platform, you can use this endpoint
+  """
+  restapiV2__liveboardQuerySql(
+    """
+    The GUID of the Answer
+    """
+    id: String!
+    """
+    A JSON array of GUIDs of the visualizations in the Liveboard.
+    """
+    vizId: [String]
+  ): LiveboardQueryResponse
+    @rest(path: "/v2/data/liveboard/querysql", method: "GET", tag: "Data")
+  """
+  To get details of the current configuration of a Thoughtspot cluster, use this endpoint.
+  """
+  restapiV2__getClusterConfig: JSON
+  """
+  To get the details of overrides to the Thoughtspot cluster configuration, use this endpoint.
+  """
+  restapiV2__getClusterConfigOverrides: JSON
+  """
+  Note: This endpoint is applicable only for SAAS deployments.
+
+  The ThoughtSpot log streaming service API allows you to programmatically get a security audit event log from the ThoughtSpot system.
+
+  To use this API, make sure you have admin user privileges.
+
+  ThoughtSpot cloud deployments allow you to collect security audit events and send them to your Security information and event management (SIEM) application in real-time.
+
+  These events can help your security operations personnel to detect potential security threats or compromised user accounts in your organization.
+  """
+  restapiV2__getLogEvents(
+    """
+    Type of the log
+    """
+    topic: LogsValues!
+    """
+    The EPOCH time in milliseconds to set the start time for streaming logs.
+
+    Example: To set the timestamp as June 1, 2021 8 am, specify 1622534400000.
+    """
+    fromEpoch: String
+    """
+    The EPOCH time in milliseconds to set the end time for streaming logs.
+
+    Example: To set the timestamp as July 1, 2021, 8 am, specify 1625126400000.
+    """
+    toEpoch: String
+  ): LogsResponse @rest(path: "/v2/logs/events", method: "GET", tag: "logs")
+  """
+  To get details of a specific custom action configured in the ThoughtSpot system, use this endpoint
+  """
+  restapiV2__getCustomAction(
+    """
+    GUID of the custom action
+    """
+    id: String!
+  ): JSON @rest(path: "/v2/customaction", method: "GET", tag: "CustomActions")
+  """
+  To search custom actions available on a ThoughtSpot instance, use this endpoint
+  """
+  restapiV2__searchCustomAction(
+    """
+    A JSON array of tag GUIDs.
+
+    If tags are applied to worksheets, search answers, or Liveboard visualizations, and custom actions are associated to these objects, you can use this parameter to filter the custom action data by tags.
+    """
+    tag: [String]
+  ): JSON
+    @rest(path: "/v2/customaction/search", method: "POST", tag: "CustomActions")
+  """
+  ThoughtSpot supports associating custom actions to Liveboards, answers, and worksheets. To get the details of the ThoughtSpot objects associated with a custom action, use this endpoint.
+  """
+  restapiV2__getCustomActionAssociation(
+    """
+    GUID of the custom action
+    """
+    id: String!
+  ): JSON
+    @rest(
+      path: "/v2/customaction/association"
+      method: "GET"
+      tag: "CustomActions"
+    )
+  """
+  To list the permissions for user and user groups on an object, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
+
+  You can optionally see the permission on the dependent objects as well by enabling includeDependent field.
+  """
+  restapiV2__getPermissionOnObject(
+    """
+    GUID of the metadata object for which the permission needs to be obtained.
+    """
+    id: String!
+    """
+    Type of metadata object. Valid values: Liveboard|Answer|DataObject|Column
+    """
+    type: SecurityType!
+    """
+    When this field is set to true, the API returns the permission details for the dependent objects for the the object included in the request
+    """
+    includeDependent: Boolean = false
+  ): SecurityPermissionResponse
+    @rest(
+      path: "/v2/security/permission/tsobject"
+      method: "GET"
+      tag: "Security"
+    )
+  """
+  Use this endpoint to list the objects on which a user or user group has permission. The response will include only those objects on which the user or user group has either VIEW OR MODIFY permission.
+
+  Requires administration privilege
+  """
+  restapiV2__getPermissionForPrincipal(
+    """
+    GUID of the user or user group for which the object permission needs to be obtained
+    """
+    id: String
+    """
+    Name of the ser or user group for which the object permission needs to be obtained
+    """
+    name: String
+  ): PrincipalSearchResponse
+    @rest(
+      path: "/v2/security/permission/principal"
+      method: "GET"
+      tag: "Security"
+    )
+  """
+  To get the details of a specific organization by name or id, use this endpoint.
+
+  At least one value needed. When both are given,then id will be considered to fetch organization information.
+
+  Requires Administration privilege for tenant.
+  """
+  restapiV2__getOrg(
+    """
+    Name of the organization.
+    """
+    name: String
+    """
+    The ID of the organization.
+    """
+    id: Int
+  ): OrgsResponse @rest(path: "/v2/org", method: "GET", tag: "Org")
+}
+
+type Mutation {
+  """
+  You can programmatically create login session for a user in ThoughtSpot using this endpoint.
+
+  You can create session by either providing userName and password as inputs in this request body or by including "Authorization" header with the token generated through the endpoint /tspublic/rest/v2/session/gettoken.
+
+  userName and password input is given precedence over "Authorization" header, when both are included in the request.
+  """
+  restapiV2__login(
+    """
+    Username of the user account
+    """
+    userName: String
+    """
+    The password of the user account
+    """
+    password: String
+    """
+    A flag to remember the user session. When set to true, sets a session cookie that persists in subsequent API calls.
+    """
+    rememberMe: Boolean
+  ): SessionLoginResponse!
+    @rest(path: "/v2/session/login", method: "GET", tag: "Session")
+  """
+   To programmatically create session token for a user in ThoughtSpot, use this endpoint.
+
+  You can generate the token for a user by providing password or secret key from the cluster.
+
+  You need to enable trusted authentication to generate secret key. To generate secret key, follow below steps.
+
+
+   1. Click the Develop tab.
+
+
+   2. Under Customizations, click Settings.
+
+
+   3. To enable trusted authentication, turn on the toggle.
+
+
+   4. A secret_key for trusted authentication is generated.
+
+
+   5. Click the clipboard icon to copy the token.
+
+
+
+
+  Password is given precedence over secretKey input, when both are included in the request.
+  """
+  restapiV2__getToken(
+    """
+    Username of the user account
+    """
+    userName: String!
+    """
+    The password of the user account
+    """
+    password: String
+    """
+    The secret key string provided by the ThoughtSpot application server. ThoughtSpot generates this secret key when you enable trusted authentication.
+    """
+    secretKey: String
+    """
+    User access privilege.
+
+    FULL - Creates a session with full access.
+
+    REPORT_BOOK_VIEW - Allow view access to the specified visualizations.
+    """
+    accessLevel: AccessLevelEnum = FULL
+    """
+    GUID of the ThoughtSpot object. If you have set the accessLevel attribute to REPORT_BOOK_VIEW, specify the GUID of the Liveboard or visualization object.
+    """
+    tsObjectId: String
+    """
+    Duration in seconds after which the token expires
+    """
+    tokenExpiryDuration: String
+    """
+    Id of the organization to be associated with the user login. If no input is provided then last logged in organization will be considered
+    """
+    orgId: String
+  ): SessionLoginResponse!
+    @rest(path: "/v2/session/gettoken", method: "GET", tag: "Session")
+  """
+  To log a user out of the current session, use this endpoint
+  """
+  restapiV2__logout: Boolean!
+  """
+  To expire or revoke a token for a user, use this endpoint
+  """
+  restapiV2__revokeToken: Boolean!
+  """
+  To programmatically create a user account in the ThoughtSpot system use this API endpoint. Using this API, you can create a user and assign groups.
+  To create a user, you require admin user privileges.
+  All users created in the ThoughtSpot system are added to ALL_GROUP
+  """
+  restapiV2__createUser(
+    """
+    Name of the user. The username string must be unique.
+    """
+    name: String!
+    """
+    A unique display name string for the user account, usually their first and last name
+    """
+    displayName: String!
+    """
+    Visibility of the user. The visibility attribute is set to DEFAULT when creating a user. The DEFAULT attribute makes a user visible to other users and user groups, and this allows them to share objects
+    """
+    visibility: PrincipalVisibilityType = DEFAULT
+    """
+    Email of the user account
+    """
+    mail: String
+    """
+    Password for the user account.
+    """
+    password: String!
+    """
+    Array of org identifiers. If no value is provided then user will be created in the organization associated with the login session.
+    """
+    orgIds: [Int]
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]
+    """
+    Status of user account. acitve or inactive.
+    """
+    state: StateType = ACTIVE
+    """
+    User preference for receiving email notifications when another ThoughtSpot user shares answers or pinboards.
+    """
+    notifyOnShare: Boolean = true
+    """
+    The user preference for revisiting the onboarding experience.
+    """
+    showWalkMe: Boolean = true
+    """
+    ThoughtSpot provides an interactive guided walkthrough to onboard new users. The onboarding experience leads users through a set of actions to help users get started and accomplish their tasks quickly. The users can turn off the Onboarding experience and access it again when they need assistance with the ThoughtSpot UI.
+    """
+    analystOnboardingComplete: Boolean = false
+    """
+    Type of user. LOCAL_USER indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: PrincipalType = LOCAL_USER
+  ): UserResponse! @rest(path: "/v2/user/create", method: "GET", tag: "User")
+  """
+  You can use this endpoint to programmatically modify an existing user account.  To modify a user, you require admin user privileges.
+  At least one of User Id or username is mandatory. When both are given, then user id will be considered and username will be updated
+  """
+  restapiV2__updateUser(
+    """
+    Name of the user. The username string must be unique.
+    """
+    name: String
+    """
+    The GUID of the user account to query
+    """
+    id: String
+    """
+    A unique display name string for the user, usually their first and last name.
+    """
+    displayName: String
+    """
+    Visibility of the user account. The visibility attribute is set to DEFAULT when creating a user. The DEFAULT attribute makes a user visible to other users and user groups, and thus allows them to share objects.
+    """
+    visibility: PrincipalVisibilityType = DEFAULT
+    """
+    email of the user.
+    """
+    mail: String
+    """
+    Status of user account. acitve or inactive.
+    """
+    state: StateType = ACTIVE
+    """
+    User preference for receiving email notifications when another ThoughtSpot user shares answers or pinboards.
+    """
+    notifyOnShare: Boolean = true
+    """
+    The user preference for revisiting the onboarding experience.
+    """
+    showWalkMe: Boolean = true
+    """
+    ThoughtSpot provides an interactive guided walkthrough to onboard new users. The onboarding experience leads users through a set of actions to help users get started and accomplish their tasks quickly. The users can turn off the Onboarding experience and access it again when they need assistance with the ThoughtSpot UI.
+    """
+    analystOnboardingComplete: Boolean = false
+    """
+    Type of user. LOCAL_USER indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: PrincipalType = LOCAL_USER
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]
+  ): Boolean! @rest(path: "/v2/user/update", method: "PUT", tag: "User")
+  """
+  To remove a user from the ThoughtSpot system, use this endpoint.
+  At Least one value needed.  When both are given user id will be considered to delete user.
+  """
+  restapiV2__deleteUser(
+    """
+    Username of the user that you want to query.
+    """
+    name: String
+    """
+    The GUID of the user account to query
+    """
+    id: String
+    """
+    Unique identifier of the organization from which the user would be deleted. If no value is provided then user will be deleted from the organization associated with the login session.
+    """
+    orgId: Int
+  ): Boolean! @rest(path: "/v2/user/delete", method: "DELETE", tag: "User")
+  """
+  To programmatically add groups to an existing ThoughtSpot user use this endpoint.
+  When you assign groups to a user, the user inherits the privileges assigned to those groups.
+  At least one of User Id or username is mandatory. When both are given, then user id will be considered.
+  """
+  restapiV2__addUserToGroups(
+    """
+    User name of the user account
+    """
+    name: String
+    """
+    The GUID of the user account
+    """
+    id: String
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]!
+  ): Boolean! @rest(path: "/v2/user/addgroup", method: "PUT", tag: "User")
+  """
+  To programmatically remove groups from an existing ThoughtSpot user, use this API endpoint.
+  The API removes only the user association. It does not delete the user or group from the Thoughtspot system
+  At least one of User Id or username is mandatory. When both are given, then user id will be considered.
+  """
+  restapiV2__removeUserFromGroups(
+    """
+    User name of the user account
+    """
+    name: String
+    """
+    The GUID of the user account
+    """
+    id: String
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]!
+  ): Boolean! @rest(path: "/v2/user/removegroup", method: "PUT", tag: "User")
+  """
+  To get the details of a specific user account or all users in the ThoughtSpot system use this end point.
+  """
+  restapiV2__searchUsers(
+    """
+    Array of field names that need to be included in the response
+    """
+    outputFields: [String]
+    """
+    User name of the user account
+    """
+    name: String
+    """
+    The GUID of the user account
+    """
+    id: String
+    """
+    A unique display name string for the user, usually their first and last name.
+    """
+    displayName: String
+    """
+    Visibility of the user account. The visibility attribute is set to DEFAULT when creating a user. The DEFAULT attribute makes a user visible to other users and user groups, and thus allows them to share objects.
+    """
+    visibility: String
+    """
+    email of the user.
+    """
+    mail: String
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]
+    """
+    Privileges assigned to user account
+    """
+    privileges: [Privilages]
+    """
+    Status of user account. acitve or inactive.
+    """
+    state: String
+    """
+    User preference for receiving email notifications when another ThoughtSpot user shares answers or pinboards.
+    """
+    notifyOnShare: Boolean
+    """
+    The user preference for revisiting the onboarding experience.
+    """
+    showWalkMe: Boolean
+    """
+    ThoughtSpot provides an interactive guided walkthrough to onboard new users. The onboarding experience leads users through a set of actions to help users get started and accomplish their tasks quickly. The users can turn off the Onboarding experience and access it again when they need assistance with the ThoughtSpot UI.
+    """
+    analystOnboardingComplete: Boolean
+    """
+    Type of user. LOCAL_USER indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: String
+  ): JSON @rest(path: "/v2/user/search", method: "POST", tag: "User")
+  """
+  To change the password of a ThoughtSpot user account, use this endpoint.
+
+  At least one of id or name of user is required. When both are given user id will be considered.
+  """
+  restapiV2__changePasswordOfUser(
+    """
+    User name of the user account.
+    """
+    name: String
+    """
+    The GUID of the user account to query.
+    """
+    id: String
+    """
+    The current password of the user.
+    """
+    currentPassword: String!
+    """
+    A new password for the user.
+    """
+    newPassword: String!
+  ): Boolean! @rest(path: "/v2/user/changepassword", method: "PUT", tag: "User")
+  """
+  To programmatically add existing ThoughtSpot users to an organization, use this API endpoint.
+
+  At least one of id or name of the organization is required. When both are given, then organization id will be considered.
+
+  Requires Administration access for the organization to which users need to be added.
+  """
+  restapiV2__addUserToOrgs(
+    """
+    The ID of the organization.
+    """
+    orgId: Int
+    """
+    Array of objects. A JSON array of name of users or GUIDs of users or both. When both are given then id is considered
+    """
+    users: [UserNameAndIDInput]!
+  ): Boolean @rest(path: "/v2/user/addorg", method: "PUT", tag: "User")
+  """
+  To programmatically create a group in the ThoughtSpot system, use this API endpoint. Using this API, you can create a group and assign privileges and users. For ease of user management and access control, ThoughtSpot administrators can create groups and assign privileges to these groups. The privileges determine the actions that the users belonging to a group are allowed to do. ThoughtSpot also has a default group called ALL_GROUP. When you create new group in ThoughtSpot, they are automatically added to ALL_GROUP. You cannot delete the ALL_GROUP or remove members from it.
+  """
+  restapiV2__createGroup(
+    """
+    Name of the user group. The group name string must be unique.
+    """
+    name: String!
+    """
+    A unique display name string for the user group, for example, Developer group.
+    """
+    displayName: String!
+    """
+    Visibility of the user group. The visibility attribute is set to DEFAULT. The DEFAULT attribute makes the user group visible for other user groups and allows them to share objects.
+    """
+    visibility: PrincipalVisibilityType = DEFAULT
+    """
+    Description text for the group.
+    """
+    description: String
+    """
+    A JSON array of privileges assigned to the group
+    """
+    privileges: [Privilages]
+    """
+    Unique identifier of the organization. If no value is provided then group will be created in the organization associated with the login session.
+    """
+    orgId: Int
+    """
+    Array of objects of groups that the group belong to.
+    """
+    groups: [GroupNameAndIDInput]
+    """
+    Array of names of user names that the group belong to.
+    """
+    users: [UserNameAndIDInput]
+    """
+    Type of user group. LOCAL_GROUP indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: PrincipalGroupType = LOCAL_GROUP
+  ): GroupResponse!
+    @rest(path: "/v2/group/create", method: "POST", tag: "Group")
+  """
+  You can use this endpoint to programmatically modify an existing user account.
+  To modify a user, you require admin user privileges.
+  At least one of User Id or username is mandatory. When both are given, then user id will be considered and username will be updated
+  """
+  restapiV2__updateGroup(
+    """
+    Name of the user group. The group name string must be unique.
+    """
+    name: String
+    """
+    he GUID of the user account to query.
+    """
+    id: String
+    """
+    A unique display name string for the user group, for example, Developer group.
+    """
+    displayName: String
+    """
+    Visibility of the user group. The visibility attribute is set to DEFAULT. The DEFAULT attribute makes the user group visible for other user groups and allows them to share objects.
+    """
+    visibility: PrincipalVisibilityType = DEFAULT
+    """
+    Description text for the group.
+    """
+    description: String
+    """
+    A JSON array of privileges assigned to the group
+    """
+    privileges: [Privilages]
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]
+    """
+    Array of object, A JSON array of name of users of users.
+    """
+    users: [UserNameAndIDInput]
+    """
+    Array of string. An array of liveboard ids to be assigned to the group.
+    """
+    assignedLiveboards: [String]
+    """
+    Type of user group. LOCAL_GROUP indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: PrincipalGroupType = LOCAL_GROUP
+  ): Boolean! @rest(path: "/v2/group/update", method: "PUT", tag: "Group")
+  """
+  To remove a group from the ThoughtSpot system, send a DELETE request to this endpoint. At Least one value needed.  When both are given user id will be considered to fetch user information.
+  """
+  restapiV2__deleteGroup(
+    """
+    Name of the group.
+    """
+    name: String
+    """
+    The GUID of the group
+    """
+    id: String
+  ): Boolean! @rest(path: "/v2/group/delete", method: "DELETE", tag: "Group")
+  """
+  To programmatically add privileges to an existing group, use API endpoint.
+  When you assign privileges to a group,  all the users under to this group inherits the privileges assigned to that group.
+  At least one of id or name of group is required. When both are given user id will be considered.
+  """
+  restapiV2__addPrivilegesToGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    A JSON array of name of users or GUIDs of users or both. When both are given then id is considered
+    """
+    privileges: [Privilages]
+  ): Boolean! @rest(path: "/v2/group/addprivilege", method: "PUT", tag: "Group")
+  """
+  To programmatically remove privileges from a group, use API endpoint. The API removes only the privilege association. It does not delete the privilege or group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
+  """
+  restapiV2__removePrivilegesFromGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    A JSON array of name of users or GUIDs of users or both. When both are given then id is considered
+    """
+    privileges: [Privilages]
+  ): Boolean!
+    @rest(path: "/v2/group/removeprivilege", method: "PUT", tag: "Group")
+  """
+  To programmatically add existing ThoughtSpot users to a group, use this API endpoint. When you assign users to a group, the users inherits the privileges assigned to that group. At least one of id or name of the group is required. When both are given user id will be considered.
+  """
+  restapiV2__addUsersToGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    Array of user name that you want to update in user group.
+    """
+    users: [UserNameAndIDInput]!
+  ): Boolean @rest(path: "/v2/group/adduser", method: "PUT", tag: "Group")
+  """
+  To programmatically remove users from a group, use API endpoint.The API removes only the user association. It does not delete the users or group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
+  """
+  restapiV2__removeUsersFromGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    Array of user name that you want to delete from user group.
+    """
+    users: [UserNameAndIDInput]!
+  ): Boolean! @rest(path: "/v2/group/removeuser", method: "PUT", tag: "Group")
+  """
+  To programmatically add existing groups to a group, use API endpoint. When you assign groups to a group, the group inherits the privileges assigned to those groups. At least one of id or name of group is required. When both are given user id will be considered.
+  """
+  restapiV2__addGroupsToGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]!
+  ): Boolean @rest(path: "/v2/group/addgroup", method: "PUT", tag: "Group")
+  """
+  To programmatically remove groups from a group, use API endpoint.The API removes only the group association. It does not delete the group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
+  """
+  restapiV2__removeGroupsFromGroup(
+    """
+    Name of the group
+    """
+    name: String
+    """
+    The GUID of the group to query.
+    """
+    id: String
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]!
+  ): Boolean! @rest(path: "/v2/group/removegroup", method: "PUT", tag: "Group")
+  """
+  To get the details of a specific group account or all groups in the ThoughtSpot system, use this end point.
+  """
+  restapiV2__searchGroups(
+    """
+    Array of field names that need to be included in the response
+    """
+    outputFields: [String]
+    """
+    Name of the user group
+    """
+    name: String
+    """
+    GUID of the group to update
+    """
+    id: String
+    """
+    A unique display name string for the user group, for example, Developer group.
+    """
+    displayName: String
+    """
+    Visibility of the user group. The visibility attribute is set to DEFAULT. The DEFAULT attribute makes the user group visible for other user groups and allows them to share objects.
+    """
+    visibility: String
+    """
+    Description text for the group.
+    """
+    description: String
+    """
+    A JSON array of privileges assigned to the group
+    """
+    privileges: [Privilages]
+    """
+    Array of objects of groups that the user belong to.
+    """
+    groups: [GroupNameAndIDInput]
+    """
+    Array of user name that associated with group.
+    """
+    users: [UserNameAndIDInput]
+    """
+    Type of user group. LOCAL_GROUP indicates that the user is created locally in the ThoughtSpot system.
+    """
+    type: String
+  ): JSON @rest(path: "/v2/group/search", method: "POST", tag: "Group")
+  """
+  To programmatically create tags, use this endpoint
+  """
+  restapiV2__createTag(
+    """
+    Name of the tag
+    """
+    name: String!
+    """
+    Hex color code to be assigned to the tag
+    """
+    color: String
+  ): MetadataTagResponse!
+    @rest(path: "/v2/metadata/tag/create", method: "POST", tag: "Metadata")
+  """
+  To programmatically update tags, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
+  """
+  restapiV2__updateTag(
+    """
+    Name of the tag
+    """
+    name: String
+    """
+    The GUID of the tag
+    """
+    id: String
+    """
+    Hex color code to be assigned to the tag
+    """
+    color: String
+  ): Boolean!
+    @rest(path: "/v2/metadata/tag/update", method: "PUT", tag: "Metadata")
+  """
+  To programmatically delete tags, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
+  """
+  restapiV2__deleteTag(
+    """
+    Name of the tag
+    """
+    name: String
+    """
+    The GUID of the tag
+    """
+    id: String
+  ): Boolean!
+    @rest(path: "/v2/metadata/tag/delete", method: "DELETE", tag: "Metadata")
+  """
+  To programmatically assign tags to a metadata object, such as a liveboard, search answer, table, worksheet, or view, use this endpoint.  At least one of id or name of tag is required. When both are given, then id will be considered.
+  """
+  restapiV2__assignTag(
+    """
+    Name of the tag
+    """
+    name: String
+    """
+    The GUID of the tag
+    """
+    id: String
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectInput]!
+  ): Boolean!
+    @rest(path: "/v2/metadata/tag/assign", method: "PUT", tag: "Metadata")
+  """
+  To programmatically unassign tags to a metadata object, such as a liveboard, search answer, table, worksheet, or view, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
+  """
+  restapiV2__unassignTag(
+    """
+    Name of the tag
+    """
+    name: String
+    """
+    The GUID of the tag
+    """
+    id: String
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectInput]!
+  ): Boolean!
+    @rest(path: "/v2/metadata/tag/unassign", method: "PUT", tag: "Metadata")
+  """
+  To programmatically assign objects to favorites for a given user account, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
+  """
+  restapiV2__assignFavorite(
+    """
+    Name of the user
+    """
+    userName: String
+    """
+    The GUID of the user
+    """
+    userId: String
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectInput]!
+  ): Boolean!
+    @rest(path: "/v2/metadata/favorite/assign", method: "PUT", tag: "Metadata")
+  """
+  To programmatically unassign objects to favorites for a given user account, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
+  """
+  restapiV2__unassignFavorite(
+    """
+    Name of the user
+    """
+    userName: String
+    """
+    The GUID of the user
+    """
+    userId: String
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectInput]!
+  ): Boolean!
+    @rest(
+      path: "/v2/metadata/favorite/unassign"
+      method: "PUT"
+      tag: "Metadata"
+    )
+  """
+  To assign a specific liveboard as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
+  """
+  restapiV2__assignHomeLiveboard(
+    """
+    Name of the user
+    """
+    userName: String
+    """
+    The GUID of the user
+    """
+    userId: String
+    """
+    The GUID of the liveboard
+    """
+    liveboardId: String
+  ): Boolean!
+    @rest(
+      path: "/v2/metadata/homeliveboard/assign"
+      method: "PUT"
+      tag: "Metadata"
+    )
+  """
+  To unassign the home liveboard set for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
+  """
+  restapiV2__unassignHomeLiveboard(
+    """
+    Name of the user
+    """
+    userName: String
+    """
+    The GUID of the user
+    """
+    userId: String
+  ): Boolean!
+    @rest(
+      path: "/v2/metadata/homeliveboard/unassign"
+      method: "PUT"
+      tag: "Metadata"
+    )
+  """
+  To export ThoughtSpot objects represented in ThoughtSpot Modeling Language (TML), use this endpoint
+  """
+  restapiV2__exportObjectTML(
+    """
+    A JSON array of GUIDs of the objects.
+    """
+    id: [String]!
+    """
+    The format in which to export the objects
+    """
+    formatType: FormatType = YAML
+    """
+    Specifies if you would like to export the associated objects. To export the objects associated with the objects specified in id, set the value to true. When set to true, the API exports any underlying worksheets, tables, or views for a given object. By default, the API does not export these underlying objects
+    """
+    exportAssociated: Boolean = false
+  ): JSON
+    @rest(path: "/v2/metadata/tml/export", method: "POST", tag: "Metadata")
+  """
+  To import ThoughtSpot objects represented in ThoughtSpot Modeling Language (TML), use this endpoint
+  """
+  restapiV2__importObjectTML(
+    """
+    A string array of TML objects to upload, in YAML or JSON format.
+
+    If TML is in YAML format, then use escape characters for quotes and new line characters.
+
+    Example TML:
+
+    guid: 6d2c1c9b-a407-409c-8c0c-819aeb51350f\ntable:\n  name: TESTINT\n  db: SUPPLYCHAIN_MAIN\n  schema: PUBLIC\n  db_table: TESTINT\n  connection:\n    name: SnowflakeConnection\n  columns:\n  - name: C1\n    db_column_name: C1\n    properties:\n      column_type: MEASURE\n      aggregation: SUM\n      index_type: DONT_INDEX\n    db_column_properties:\n      data_type: INT64\n
+
+    If TML is in JSON format, then use escape characters for quotes.
+
+    Example TML:
+
+    {\\"guid\\": \\"6d2c1c9b-a407-409c-8c0c-819aeb51350f\\", \\"table\\": {     \\"name\\": \\"TESTINT\\", \\"db\\": \\"SUPPLYCHAIN_MAIN\\", \\"schema\\": \\"PUBLIC\\", \\"db_table\\": \\"TESTINT\\",     \\"connection\\": { \\"name\\": \\"SnowflakeConnection\\" }, \\"columns\\": [ { \\"name\\": \\"C1\\", \\"db_column_name\\": \\"C1\\", \\"properties\\": { \\"column_type\\": \\"MEASURE\\", \\"aggregation\\": \\"SUM\\", \\"index_type\\": \\"DONT_INDEX\\" }, \\"db_column_properties\\": { \\"data_type\\": \\"INT64\\" } } ] } }',
+    """
+    objectTML: [String]!
+    """
+    Policy to follow during import
+    """
+    importPolicy: ImportPolicy = PARTIAL
+    """
+    Specifies if you are updating or creating objects. To create new objects, specify true. By default, ThoughtSpot updates existing objects that have the same GUID as the objects you are importing. When set to true, the GUID property in the imported TML is replaced on the server, and the response headers will include the id_guid property with the GUID of the new object. The new object will be assigned a new GUID, even if the imported TML file included a guid value. Thus, there is no need to include the guid in the TML file if you are using forceCreate=true.
+    """
+    forceCreate: Boolean = false
+  ): JSON
+    @rest(path: "/v2/metadata/tml/import", method: "POST", tag: "Metadata")
+  """
+  Use this endpoint to delete the metadata objects
+  """
+  restapiV2__deleteObject(
+    """
+    Type of the metadata object being searched
+    """
+    type: TsObjectDetailGet!
+    """
+    A JSON array of GUIDs of the objects
+    """
+    id: [String]!
+  ): Boolean!
+    @rest(path: "/v2/metadata/delete", method: "DELETE", tag: "Metadata")
+  """
+  To create a table in Falcon, use this endpoint.
+  """
+  restapiV2__createTable(
+    """
+    Flag to indicate if the database and schema should be created if they do not exist in Falcon. (Valid values: True/False)
+    """
+    createDatabase: Boolean = true
+    """
+    DDL of the table to be created. Example: {"database":{"name":"test_db"},"schema":{"name":"test_schema"},"table":{"id":{"name":"test_table"},"primary_key":[{"name":"test_pk"}],"column":[{"id":{"name":"test_pk"},"size":0,"data_type":"TYPE_INT32"},{"id":{"name":"test_col1"},"size":0,"data_type":"TYPE_FLOAT"},{"id":{"name":"test_col2"},"data_type":"TYPE_INT64","datetime":"TYPE_DATE"}{"id":{"name":"test_col3"},"size":10,"data_type":"TYPE_VAR_CHAR"}]}}
+    """
+    schema: String
+  ): CreateTableResponse!
+    @rest(path: "/v2/database/table/create", method: "POST", tag: "Database")
+  """
+  To run a TQL statement in Falcon, use this endpoint. You can run only following type of statements - Table DDL alter and Table rows update and delete.
+  """
+  restapiV2__runQuery(
+    """
+    A JSON array of TQL statements separated by semi-colon (;). Each TQL statement should end with semi-colon (;). The TQL operations that can be run through this API are restricted to create database and schema, alter table, delete and update table rows. If a TQL statement fails, then the subsequent statements in the array are not run. Example: ["alter table test_db.test_schema.test_table drop contraint primary key;";"alter table test_db.test_schema.test_table add column test_col4 varchar(10) DEFAULT '';"]
+    """
+    statement: [String]!
+  ): [JSON]
+    @rest(path: "/v2/database/table/runquery", method: "POST", tag: "Database")
+  """
+  To query the details of dependent objects and associate objects as dependents, you can use this API. Dependency is defined as relation between referenced and referencing objects. A referencing object is said to have a dependency on a referenced object, if the referenced object cannot be deleted without first deleting the referencing object. For example, consider a worksheet 'W1' that has a derived logical column 'C1' that has a reference to a base logical column 'C2'. This can be shown diagramatically as: W1-->C1-->C2. W1 has a dependency on C2 i.e. W1 is a referencing object and C2 is a referenced object. It is not possible to delete C2 without first deleting W1 because deletion of C2 will be prevented by the relationship between W1's column C1 and C2. Similarly C1 is said to have a dependency on C2 i.e. C1 is a referencing object and C2 is a referenced object. It is not possible to delete C2 without first deleting C1
+  """
+  restapiV2__getObjectDependency(
+    """
+    Type of the data object
+    """
+    type: ObjectDependency!
+    """
+    A JSON array of GUIDs of the objects
+    """
+    id: [String]!
+    """
+    The maximum number of batches to fetch in a query. If this attribute is not defined, the value specified in the cluster configuration is used. To get the list of all dependent objects in a single query, define the batch size attribute as -1
+    """
+    batchSize: Int = -1
+  ): JSON
+    @rest(path: "/v2/metadata/dependency", method: "POST", tag: "Metadata")
+  """
+  To programmatically create a connection in the ThoughtSpot system use this API endpoint.
+  Using this API, you can create a connection and assign groups.
+  To create a connection, you require admin connection privileges.
+  All connections created in the ThoughtSpot system are added to ALL_GROUP
+  """
+  restapiV2__createConnection(
+    """
+    Type of the data connection.
+    """
+    type: DataConnection!
+    """
+    Name of the connection
+    """
+    name: String!
+    """
+    A short description of the connection.
+    """
+    description: String
+    """
+    A JSON object of the connection metadata. The metadata must include configuration attributes required to create the connection.
+    """
+    configuration: String!
+  ): CreateConnectionResponse!
+    @rest(path: "/v2/connection/create", method: "POST", tag: "Connection")
+  """
+  You can use this endpoint to programmatically modify an existing connection
+  To modify a connection, you require admin connection privileges.
+  At least one of Connection Id or connectionname is mandatory. When both are given, then connection id will be considered and connectionname will be updated
+  """
+  restapiV2__updateConnection(
+    """
+    GUID of the connection
+    """
+    id: String!
+    """
+    The text to update the name of the connection.
+    """
+    name: String
+    """
+    The text to update the description of the connection.
+    """
+    description: String
+    """
+    A JSON object of the connection metadata. Include all the configuration attributes with original value along with the changes required to any attribute.
+    """
+    configuration: String!
+  ): Boolean!
+    @rest(path: "/v2/connection/update", method: "PUT", tag: "Connection")
+  """
+  To remove a connection from the ThoughtSpot system, use this endpoint.
+  """
+  restapiV2__deleteConnection(
+    """
+    A JSON array of GUIDs of the connection
+    """
+    id: [String]!
+  ): Boolean!
+    @rest(path: "/v2/connection/delete", method: "DELETE", tag: "Connection")
+  """
+  To programmatically add table to an existing connection use this endpoint.
+  When you assign groups to a connection, the connection inherits the privileges assigned to those groups.
+  At least one of Connection Id or connectionname is mandatory. When both are given, then connection id will be considered.
+  """
+  restapiV2__addTableToConnection(
+    """
+    GUID of the connection
+    """
+    id: String!
+    """
+    A JSON array of table details
+    """
+    table: [AddTableInput]!
+  ): Boolean
+    @rest(path: "/v2/connection/addtable", method: "PUT", tag: "Connection")
+  """
+  To programmatically remove a table from a connection use API endpoint.
+  The API removes only the connection association. It does not delete the connection or group from the Thoughtspot system.
+   At least one of id or name of connection is required. When both are given connection id will be considered.
+  """
+  restapiV2__removeTableFromConnection(
+    """
+    GUID of the connection
+    """
+    id: String!
+    """
+    A JSON array of name or GUIDs of the table or both. At least one input is required. Provide either table name or id. When both are given then id is considered
+    """
+    table: [TableInput]!
+  ): Boolean!
+    @rest(path: "/v2/connection/removetable", method: "PUT", tag: "Connection")
+  """
+  To get the details of a specific connection or all connections in the ThoughtSpot system use this end point.
+  """
+  restapiV2__searchConnection(
+    """
+    The offset point, starting from where the records should be included in the response. If no input is provided then offset starts from 0
+    """
+    offset: Int = 0
+    """
+    An alternate way to set offset for the starting point of the response. Offset field should be kept blank to use the value from this field. Offset value will be calculated as (batchNumber - 1) * batchSize. It is mandatory to provide a value for batchSize with batchNumber. Example: Assume response has 100 records. Now,  batchNumber is set as 2 and batchSize as 10, then offset value will be 10. So, 10 records starting from 11th record will be considered.
+    """
+    batchNumber: Int = -1
+    """
+    The number of records that should be included in the response starting from offset position. If no input is provided, then all records starting from the value provided in offset is included in the response.
+    """
+    batchSize: Int = -1
+    """
+    Field based on which the re.sponse needs to be ordered. Valid values
+    """
+    sortBy: SortBy = DEFAULT
+    """
+    Order in which sortBy should be applied. Valid values
+    """
+    sortOrder: SortOrder
+    """
+    Type of the connect being searched. Valid values: SNOWFLAKE|AMAZON_REDSHIFT|GOOGLE_BIGQUERY|AZURE_SYNAPSE|TERADATA|STARBURST|SAP_HANA|ORACLE_ADW|DATABRICKS|DENODO
+    """
+    type: DataConnection!
+    """
+    A pattern to match the name of the connection. This parameter supports matching case-insensitive strings. For a wildcard match, use %.
+    """
+    namePattern: String
+    """
+    A JSON array containing the GUIDs of the connections that you want to fetch.
+    """
+    fetchId: [String]
+    """
+    A JSON array containing the GUIDs of the connections that you want to skip.
+    """
+    skipId: [String]
+    """
+    A JSON array of name or GUID of tags or both. When both are given then id is considered
+    """
+    tag: [TagNameAndIdInput]
+  ): [ConnectionResponse]
+    @rest(path: "/v2/connection/search", method: "POST", tag: "Connection")
+  """
+  To get the details of tables from a connection, use this endpoint.
+
+  You can get the details of tables in the data platform for the connection id provided.
+  """
+  restapiV2__getConnectionTables(
+    """
+    The GUID of the connection
+    """
+    id: String!
+    """
+       A JSON object of the connection metadata. If this field is left empty, then the configuration saved in the connection is considered.
+
+    To get the tables based on a different configuration, include required attributes in the connection configuration JSON.
+
+    Example:
+
+
+       Get tables from Snowflake with a different user account than specified in the connection: {"user":"test_user","password":"test_pwd","role":"test_role"}
+
+
+       Get tables from Redshift for different database than specified in the connection: {"database":"test_db"}
+    """
+    configuration: String
+    """
+    When set to true, the response will include column level details as well
+    """
+    includeColumn: Boolean = true
+  ): ConnectionTableResponse
+    @rest(path: "/v2/connection/table", method: "POST", tag: "Connection")
+  """
+  To get the details of columns in a table associated to a connection, use this endpoint.
+
+  You can get the columns of any table available in the data platform for the connection id provided.
+  """
+  restapiV2__getConnectionTableColumns(
+    """
+    The GUID of the connection
+    """
+    id: String!
+    """
+       A JSON object of the connection metadata. If this field is left empty, then the configuration saved in the connection is considered.
+
+    To get the tables based on a different configuration, include required attributes in the connection configuration JSON.
+
+    Example:
+
+
+       Get tables from Snowflake with a different user account than specified in the connection: {"user":"test_user","password":"test_pwd","role":"test_role"}
+
+
+       Get tables from Redshift for different database than specified in the connection: {"database":"test_db"}
+    """
+    configuration: String
+    """
+    List of table details
+    """
+    table: [ConnectionTableColumnsInput]!
+  ): ConnectionTableColumnsResponse
+    @rest(
+      path: "/v2/connection/tablecoloumn"
+      method: "POST"
+      tag: "Connection"
+    )
+  """
+  To update the Thoughtspot cluster configuration, use this endpoint.
+  """
+  restapiV2__updateClusterConfig(
+    """
+    A JSON file with the key-value pair of configuration attributes to be updated.
+
+    Example: {"defaultChartDataSize": 5000}
+    """
+    configuration: String
+  ): Boolean!
+    @rest(path: "/v2/admin/configuration/update", method: "PUT", tag: "admin")
+  """
+  To reset the password of a ThoughtSpot user account, use this endpoint.
+
+  It is mandatory to use Authorization header with token of a user with admin access to successfully run this endpoint.
+
+  At least one of User Id or username is mandatory. When both are given, then user id will be considered.
+  """
+  restapiV2__resetUserPassword(
+    """
+    User name of the user account
+    """
+    name: String
+    """
+    The GUID of the user account to query.
+    """
+    id: String
+    """
+    A new password for the user.
+    """
+    newPassword: String!
+  ): Boolean!
+    @rest(path: "/v2/admin/resetpassword", method: "PUT", tag: "admin")
+  """
+  To programmatically synchronize user accounts and user groups from external system with ThoughtSpot, use this endpoint.
+
+   The payload takes principals containing all users and groups present in the external system.
+
+   The users and user groups in Thoughtspot get updated for any matching inputs.
+
+   Any user and user group present in the input, but not present in the cluster, gets created in cluster.
+  n You can optionally choose to delete the user and groups from the cluster, that are not present in the input.
+  """
+  restapiV2__syncPrincipal(
+    """
+    A JSON array of principal objects containing all users and groups present in the external system.
+
+    Example:
+
+    {
+
+    "name": "Customer Success",
+
+    "displayName": "Customer Success",
+
+    "description": "CS",
+
+    "created": 1568926267025,
+
+    "modified": 1568926982242,
+
+    "principalTypeEnum": "LOCAL_GROUP",
+
+    "groupNames": [],
+
+    "visibility": "DEFAULT"
+
+    },
+
+    {
+
+    "name": "test",
+
+    "displayName": "test one",
+
+    "created": 1587573621279,
+
+    "modified": 1587573621674,
+
+    "mail": "test2@test.com",
+
+    "principalTypeEnum": "LOCAL_USER",
+
+    "groupNames": [ "Administrator", "All" ],
+
+    "visibility": "DEFAULT"
+
+    }
+
+    You can leave the created and modified dates blank for new users.
+
+    You can specify if the principal is a user (LOCAL_USER) or user group (LOCAL_GROUP) in the principalTypeEnum keyword.
+
+    Set visibility to NON_SHARABLE, if you do not want the user to be able to share ThoughtSpot objects with other users in this group.
+    """
+    principalObject: [JSON]!
+    """
+    Specifies whether to apply the changes to users and groups already in the cluster based on the principal object list input.
+    """
+    updateModified: Boolean = false
+    """
+    Specifies whether to delete the users and groups already in the cluster if not present in the principal object list input.
+    """
+    deleteRemoved: Boolean = false
+    """
+    Assign a password for new users added during the sync operation.
+
+    All new users added will have this password. It is mandatory to provide value for this field if new users are included in the input list.
+    """
+    newUserPassword: String
+  ): AdminsyncPrincipalResponse!
+    @rest(path: "/v2/admin/syncprincipal", method: "PUT", tag: "admin")
+  """
+  To programmatically change the owner of one or several objects from one user account to another, use this endpoint.
+
+  You might want to transfer ownership of objects owned by a user to another active user, when the account is removed from the ThoughtSpot application.
+  """
+  restapiV2__changeAuthorOfObjects(
+    """
+    A JSON array of GUIDs of the metadata objects.
+
+    To change owner of all the objects owned by a user, provide single input as ALL.
+
+    If multiple object ids along with ALL is provided as input, then ALL will be considered.
+    """
+    tsObjectId: [String]!
+    """
+    A JSON object of name or GUIDs of the current owner of the objects. When both are given then id is considered.
+
+    If a list of object ids are provided as input for tsObjectId, then only for those ids that have owner as the value provided in fromUser, the owner will be changed.
+
+    Provide either name or id as input. When both are given user id will be considered.
+    """
+    fromUser: FromUserNameAndIDInput!
+    """
+    A JSON object of name or GUIDs of the new owner for the objects. When both are given then id is considered.
+    """
+    toUser: ToUserNameAndIDInput!
+  ): Boolean! @rest(path: "/v2/admin/changeauthor", method: "PUT", tag: "admin")
+  """
+  To programmatically assign an author to one or several objects, use this endpoint.
+
+  Provide either user name or id as input. When both are given user id will be considered.
+
+  Requires administration privilege.
+  """
+  restapiV2__assignAuthorToObjects(
+    """
+    A JSON array of GUIDs of the metadata objects.
+    """
+    tsObjectId: [String]!
+    """
+    User name of the user account
+    """
+    name: String
+    """
+    The GUID of the user account
+    """
+    id: String
+  ): Boolean! @rest(path: "/v2/admin/assignauthor", method: "PUT", tag: "admin")
+  """
+  To logout one or more users from logged in session, use this endpoint. If no input is provided then all logged in users are force logged out.
+
+  Requires administration privilege
+  """
+  restapiV2__forceLogoutUsers(
+    """
+    A JSON array of name of users or GUIDs of groups or both. When both are given then id is considered.
+    """
+    user: [NameAndIdInput]
+  ): Boolean @rest(path: "/v2/admin/forcelogout", method: "POST", tag: "admin")
+  """
+  To programmatically download Answer data as a file, use this endpoint.
+
+  The PDF will download data in the tabular format even if Answer is saved as chart.
+  """
+  restapiV2__answerReport(
+    """
+    GUID of the Answer to download.
+    """
+    id: String!
+    """
+    Type of file to be generated.
+    """
+    type: ReportFormat!
+  ): JSON @rest(path: "/v2/report/answer", method: "GET", tag: "report")
+  """
+  To programmatically download Liveboard data or specific Visualization data from Liveboard as a file, use this endpoint
+  """
+  restapiV2__liveboardReport(
+    """
+    GUID of the Liveboard to download.
+
+    This field is considered only when no input is provided for transientContent field.
+    """
+    id: String
+    """
+    JSON Array of GUIDs of the visualizations in the Liveboard to be included in the downloaded file.
+
+    For CSV, XLSX and PNG file download, visualization id is mandatory. CSV and XLSX is valid only for visualization of type table and PNG is valid for charts.
+
+    Only one value will be accepted for these formats. If multiple values are provided then first value in the array will be considered.
+    """
+    vizId: [String]
+    """
+    If you have embedded ThoughtSpot in your host application, and you want to download Liveboards with unsaved changes as a file, pass the transient content from the browser fetch request, using the getExportRequestForCurrentPinboard method. For more information, see https://developers.thoughtspot.com/docs/?pageid=liveboard-export-api#transient-pinboard.
+    """
+    transientContent: String
+    """
+    If you have embedded ThoughtSpot in your host application, and you want to download Liveboards with unsaved changes as a file, pass the transient content from the browser fetch request, using the getExportRequestForCurrentPinboard method. For more information, see https://developers.thoughtspot.com/docs/?pageid=liveboard-export-api#transient-pinboard .
+    """
+    runtimeFilter: String
+    """
+    JSON object which provides columns to sort the data at the time of data retrieval.
+
+    Example: {"sortCol1":"region","asc1":true,"sortCol2":"date"}
+
+    For more information, see https://developers.thoughtspot.com/docs/?pageid=runtime-filters
+    """
+    runtimeSort: String
+    """
+    Type of file to be generated. Valid values: CSV/XLSX/PDF/PNG.
+    """
+    type: ReportFormat!
+    """
+    Additional options that are applicable for PDF type.
+    """
+    pdfOptions: pdfOptionsInput
+  ): JSON @rest(path: "/v2/report/liveboard", method: "GET", tag: "report")
+  """
+  Use this endpoint to refresh data in the materialized view by running the query associated with it
+  """
+  restapiV2__refreshMaterializedView(
+    """
+    GUID of metadata object
+    """
+    id: String!
+  ): JSON
+    @rest(
+      path: "/v2/materialization/refreshview"
+      method: "PUT"
+      tag: "materialization"
+    )
+  """
+  To programmatically create custom actions on ThoughtSpot clusters that support embedding configuration, use this endpoint
+  """
+  restapiV2__createCustomAction(
+    """
+    A JSON object with the key-value pair of configuration attributes
+
+    Example:
+
+    {"id":"3f7eac93-cce1-4ffc-b7a8-429353edbc6b","name":"unpkg test","version":"v2","type":"URL","detail":{"link":"https://unpkg.com ","function":"unpkg-test","authSelect":"BEARER","authToken":"asdfasadf3q4534534","encodeUser":"","apiKey":"X-API-KEY","apiValue":"","additionalUrlHeaders":"{\\"url_header1\\":{\\"id\\":\\"6a82908c-9328-40ff-b347-65adeda12f57\\",\\"key\\":\\"key1\\",\\"value\\":\\"value1\\"}}"},"actionAssociationMap":{"ANSWER":{"e4079d3f-ae71-4b0a-a70a-f17ecaf157a5":{"enabled":"true","context":"MENU"}}},"context":"NONE","availability":["GLOBAL"],"userGroupList":["d0326b56-ef23-4c8a-8327-a30e99bcc72b"]}
+    """
+    configuration: String!
+  ): JSON
+    @rest(path: "/v2/customaction/create", method: "POST", tag: "CustomActions")
+  """
+  To programmatically edit an existing custom action, use this endpoint
+  """
+  restapiV2__updateCustomAction(
+    """
+    GUID of the custom action
+    """
+    id: String!
+    """
+    A JSON object with the key-value pair of configuration attributes
+
+    Example:
+
+    {"id":"3f7eac93-cce1-4ffc-b7a8-429353edbc6b","name":"unpkg test","version":"v2","type":"URL","detail":{"link":"https://unpkg.com ","function":"unpkg-test","authSelect":"BEARER","authToken":"asdfasadf3q4534534","encodeUser":"","apiKey":"X-API-KEY","apiValue":"","additionalUrlHeaders":"{\\"url_header1\\":{\\"id\\":\\"6a82908c-9328-40ff-b347-65adeda12f57\\",\\"key\\":\\"key1\\",\\"value\\":\\"value1\\"}}"},"actionAssociationMap":{"ANSWER":{"e4079d3f-ae71-4b0a-a70a-f17ecaf157a5":{"enabled":"true","context":"MENU"}}},"context":"NONE","availability":["GLOBAL"],"userGroupList":["d0326b56-ef23-4c8a-8327-a30e99bcc72b"]}
+    """
+    configuration: String!
+  ): JSON
+    @rest(path: "/v2/customaction/update", method: "PUT", tag: "CustomActions")
+  """
+  To programmatically delete a custom action, use this endpoint
+  """
+  restapiV2__deleteCustomAction(
+    """
+    GUID of the custom action
+    """
+    id: String!
+  ): JSON
+    @rest(
+      path: "/v2/customaction/delete"
+      method: "DELETE"
+      tag: "CustomActions"
+    )
+  """
+  To programmatically associate a custom action to a ThoughtSpot object, use this endpoint
+  """
+  restapiV2__updateCustomActionAssociation(
+    """
+    GUID of the custom action
+    """
+    id: String!
+    """
+    A JSON map of the attributes with association of the action to ThoughtSpot object ID
+
+    Example:
+
+    {"id":"0dbd5b3a-84c1-4407-9803-cf07d67e6fcf","name":"My worksheet action","version":"v2","type":"URL","detail":{"link":"https://unpkg.com","function":"my-worksheet-action","authSelect":"NONE","authToken":"","encodeUser":"","apiKey":"X-API-KEY","apiValue":"","additionalUrlHeaders":"{}"},"actionAssociationMap":{"WORKSHEET":{"2b9d083a-275c-4984-9cfe-90b036affa17":{"enabled":"true","context":"PRIMARY"}}},"context":"NONE","availability":[ ],"userGroupList":["d0326b56-ef23-4c8a-8327-a30e99bcc72b"]}
+    """
+    association: String!
+  ): JSON
+    @rest(
+      path: "/v2/customaction/association/update"
+      method: "PUT"
+      tag: "CustomActions"
+    )
+  """
+  To remove custom action associations to ThoughtSpot objects, use this endpoint
+  """
+  restapiV2__deleteCustomActionAssociation(
+    """
+    GUID of the custom action
+    """
+    id: String!
+    """
+    A JSON map of the attributes with association of the action to ThoughtSpot object ID
+
+    Example:
+
+    {"id":"0dbd5b3a-84c1-4407-9803-cf07d67e6fcf","name":"My worksheet action","version":"v2","type":"URL","detail":{"link":"https://unpkg.com","function":"my-worksheet-action","authSelect":"NONE","authToken":"","encodeUser":"","apiKey":"X-API-KEY","apiValue":"","additionalUrlHeaders":"{}"},"actionAssociationMap":{"WORKSHEET":{"2b9d083a-275c-4984-9cfe-90b036affa17":{"enabled":"true","context":"PRIMARY"}}},"context":"NONE","availability":[ ],"userGroupList":["d0326b56-ef23-4c8a-8327-a30e99bcc72b"]}
+    """
+    association: String!
+  ): JSON
+    @rest(
+      path: "/v2/customactions/association/delete"
+      method: "DELETE"
+      tag: "CustomActions"
+    )
+  """
+  To programmatically share ThoughtSpot objects with another user or user group, use this endpoint.
+
+  When you share an object like a Liveboard or visualization, a notification with a live link is sent to the user. When the users access this object, they can view the last saved version of the object.
+  """
+  restapiV2__shareObject(
+    """
+    Type of metadata object. Valid values: Liveboard|Answer|DataObject|Column
+    """
+    type: SecurityType!
+    """
+    A JSON array of the GUIDs of the objects to be shared
+    """
+    id: [String]!
+    """
+    A JSON object with GUIDs of user and user group, and the type of access privilge.
+
+    You can provide READ_ONLY or MODIFY access to the objects. With READ_ONLY access, the user or user group can view the shared object, whereas MODIFY access enables users to modify the object.
+
+    To remove access to a shared object, you can set the shareMode in the permission string to NO_ACCESS. Example:
+
+    {"permissions": {"e7040a64-7ff1-4ab9-a1b0-f1acac596866": {"shareMode": "READ_ONLY"}, "f7b8f511-317c-485d-8131-26cf084ef47b": {"shareMode": "MODIFY"}, "7a9a6715-e154-431b-baaf-7b58246c13dd":{"shareMode":"NO_ACCESS"}}}
+    """
+    permission: String!
+    """
+    The email addresses that should ne notified when the objects are shared.
+    """
+    emailId: [String] = []
+    """
+    When set to true, a notification is sent to the users after an object is shared.
+    """
+    notify: Boolean = true
+    """
+    The message text to send in the notification email.
+    """
+    message: String
+    """
+    When set to true, ThoughtSpot sends a link with the host application context to allow users to access the shared object from their ThoughtSpot embedded instance.
+    """
+    includeCustomEmbedUrl: Boolean = false
+  ): Boolean
+    @rest(path: "/v2/security/share/tsobject", method: "POST", tag: "Security")
+  """
+  If you want to share a specific visualization from a Liveboard with another user or user group, then use this endpoint.
+
+  Requires privilege to share the visualization
+  """
+  restapiV2__shareVisualization(
+    """
+    A JSON array of the GUIDs of the objects to be shared
+    """
+    id: String!
+    """
+    The GUID of visualization
+    """
+    vizId: String!
+    """
+    The GUID of the users and user groups with which you want to share the visualization
+    """
+    principalId: [String]!
+    """
+    The email addresses that should ne notified when the objects are shared
+    """
+    emailId: [String] = []
+    """
+    When set to true, a notification is sent to the users after an object is shared.
+    """
+    notify: Boolean = true
+    """
+    The message text to send in the notification email.
+    """
+    message: String
+    """
+    When set to true, ThoughtSpot sends a link with the host application context to allow users to access the shared object from their ThoughtSpot embedded instance.
+    """
+    includeCustomEmbedUrl: Boolean = false
+  ): Boolean
+    @rest(
+      path: "/v2/security/share/visualization"
+      method: "POST"
+      tag: "Security"
+    )
+  """
+  To list the permissions for user and user groups on a list of objects, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
+
+  You can either provide list of object ids or type of objects to list the permissions for. One of these inputs is mandatory. If both are provided then only object ids will be considred.
+
+  You can optionally provide users or user groups for which the persmission needs to be displayed.
+
+  You can optionally see the permission on the dependent objects as well by enabling includeDependent field.
+
+  Requires administration privilege
+  """
+  restapiV2__searchPermissionOnObjects(
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectSearchInput]!
+    """
+    A JSON array of principal names or GUIDs. When both are given then id is considered.
+    """
+    principal: [UserNameAndIDInput]
+    """
+    When this field is set to true, the API response includes the permission details for the dependent objects.
+    """
+    includeDependent: Boolean = false
+  ): [SecurityPermissionResponse]
+    @rest(
+      path: "/v2/security/permission/tsobject/search"
+      method: "POST"
+      tag: "Security"
+    )
+  """
+  To list the permissions for user and user groups on a list of objects, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
+
+  You can either provide list of object ids or type of objects to list the permissions for. One of these inputs is mandatory. If both are provided then only object ids will be considred.
+
+  You can optionally provide users or user groups for which the persmission needs to be displayed.
+
+  You can optionally see the permission on the dependent objects as well by enabling includeDependent field.
+
+  Requires administration privilege
+  """
+  restapiV2__searchPermissionForPrincipals(
+    """
+    A JSON array of principal names or GUIDs to be included in the request. When both are given then id is considered.
+    """
+    principal: [UserNameAndIDInput]!
+    """
+    A JSON Array of GUIDs and type of metadata object.
+    """
+    tsObject: [TsObjectSearchInput]
+  ): [PrincipalSearchResponse]
+    @rest(
+      path: "/v2/security/permission/principal/search"
+      method: "POST"
+      tag: "Security"
+    )
+  """
+  To programmatically create an organization in the ThoughtSpot system, use this API endpoint.
+
+  Requires Administration privilege for tenant.
+  """
+  restapiV2__createOrg(
+    """
+    Name of the organization.
+    """
+    name: String!
+    """
+    Description text for the organization.
+    """
+    description: String
+  ): OrgsResponse @rest(path: "/v2/org/create", method: "POST", tag: "Org")
+  """
+  You can use this endpoint to programmatically modify an existing org.
+
+  Provide name or id of the organization to update the properties. When both id and name are given, then id will be considered and name of the organization will be updated.
+
+  Requires Administration privilege for tenant.
+  """
+  restapiV2__updateOrg(
+    """
+    Name of the organization.
+    """
+    name: String
+    """
+    The ID of the organization.
+    """
+    id: Int
+    """
+    Description text for the organization.
+    """
+    description: String
+    """
+    Status of the organization.
+    """
+    active: Boolean
+  ): OrgsResponse @rest(path: "/v2/org/update", method: "PUT", tag: "Org")
+  """
+  To remove an organization from the ThoughtSpot system, send a DELETE request to this endpoint.
+
+  At least one value is needed. When both id and name are given, then id will be considered.
+
+  Requires Administration privilege for tenant.
+  """
+  restapiV2__deleteOrg(
+    """
+    Name of the organization.
+    """
+    name: String
+    """
+    The ID of the organization.
+    """
+    id: Int
+  ): Boolean! @rest(path: "/v2/org/delete", method: "DELETE", tag: "Org")
+  """
+  To get the details of a specific organization or all organizations in the ThoughtSpot system use this end point.
+
+  If no input is provided, then all organizations are included in the response.
+
+  Requires Administration privilege for tenant.
+  """
+  restapiV2__searchOrgs(
+    """
+    Name of the organization.
+    """
+    name: String
+    """
+    The ID of the organization.
+    """
+    id: Int
+    """
+    When set to true, the response will include the details of deleted organization also.
+    """
+    showDeleted: Boolean = false
+  ): [OrgsResponse] @rest(path: "/v2/org/search", method: "POST", tag: "Org")
+}
+
+enum AuthTokenType {
+  Cookie
+  Bearer
+}
+
+"""
+Login response
+"""
+type SessionLoginResponse {
+  """
+  Username of the user account for which token is generated
+  """
+  userName: String
+  """
+  Bearer token generated. This will be blank when token type is Cookie
+  """
+  token: String
+  """
+  Date and time at which the token is generated
+  """
+  tokenCreatedTime: String
+  """
+  Duration in seconds after which the token expires
+  """
+  tokenExpiryDuration: String
+  """
+  Type of token generated
+  """
+  tokenType: String
+}
+
+enum AccessLevelEnum {
+  FULL
+  REPORT_BOOK_VIEW
+}
+
+input GroupNameAndIDInput {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  GUID of the group
+  """
+  id: String
+}
+
+type GroupNameAndID {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  GUID of the group
+  """
+  id: String
+}
+
+type UserNameAndID {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+input UserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+enum PrincipalVisibilityType {
+  DEFAULT
+  NON_SHARABLE
+  SHARABLE
+}
+
+enum Privilages {
+  RANALYSIS
+  DATAMANAGEMENT
+  APPLICATION_ADMINISTRATION
+  USER_ADMINISTRATION
+  SYSTEMMANAGEMENT
+  SYSTEM_INFO_ADMINISTRATION
+  AUTHORING
+  BACKUP_ADMINISTRATION
+  SHAREWITHALL
+  DEVELOPER
+  JOBSCHEDULING
+  GROUP_ADMINISTRATION
+  BYPASSRLS
+  EXPERIMENTALFEATUREPRIVILEGE
+  A3ANALYSIS
+  USERDATAUPLOADING
+  DATADOWNLOADING
+  DISABLE_PINBOARD_CREATION
+  ADMINISTRATION
+}
+
+type UserResponse {
+  """
+  Username of the user account
+  """
+  name: String
+  """
+  Display name of the user account
+  """
+  displayName: String
+  """
+  GUID of the user account
+  """
+  id: String
+  """
+  Visibility of the user account
+  """
+  visibility: String
+  """
+  Email of the user account
+  """
+  mail: String
+  """
+  Name of the group to which user account is added
+  """
+  groups: [GroupNameAndID]
+  """
+  Privileges assigned to user account
+  """
+  privileges: [String]
+  """
+  The organizations that user belongs to
+  """
+  orgs: [OrgType]
+  """
+  Tags assigned to the user
+  """
+  tags: [String]
+  """
+  Indicates if the user account is active or inactive
+  """
+  state: String
+  """
+  Indicates if the email should be sent when object is shared with the user
+  """
+  notifyOnShare: Boolean
+  """
+  Indicates if the walk me should be shown when logging in
+  """
+  showWalkMe: Boolean
+  """
+  Indicates if the onboarding is completed for the user
+  """
+  analystOnboardingComplete: Boolean
+  """
+  Indicates if the use is logging in for the first time
+  """
+  firstLogin: Int
+  """
+  Indicates if the welcome email is sent to email associated with the user account
+  """
+  welcomeEmailSent: Boolean
+  """
+  Indicates if the user account is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the user account is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the user account is from external system
+  isDeprecated
+  """
+  isExternal: Boolean
+  isDeprecated: Boolean
+  """
+  Indicates if the all the properties of user account is provided
+  """
+  complete: Boolean
+  """
+  Indicates if the user account is super user
+  """
+  isSuperUser: Boolean
+  """
+  Indicates if the user account is system principal
+  """
+  isSystemPrincipal: Boolean
+  """
+  Indicates the type of user account
+  """
+  type: String
+  """
+  Indicates the type of parent object
+  """
+  parenttype: String
+  """
+  Tenant id associated with the user account
+  """
+  tenantId: String
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when user account was created
+  """
+  created: Float
+  """
+  Date and time of last modification of user account
+  """
+  modified: Float
+  """
+  Author of the user account
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user account details
+  """
+  modifiedBy: UserNameAndID
+  """
+  Owner of the user account
+  """
+  owner: UserNameAndID
+}
+
+enum PrincipalType {
+  UNKNOWN
+  LDAP_USER
+  SAML_USER
+  OIDC_USER
+  LOCAL_USER
+}
+
+enum StateType {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  LOCKED
+  PENDING
+}
+
+enum TrueFalse {
+  True
+  False
+}
+
+type PinboardDetails {
+  """
+  pinboard id of recently pinned pinboard
+  """
+  pinboardId: String
+  """
+  pinboard name of recently pinned pinboard
+  """
+  pinboardName: String
+  """
+  tab id of recently pinned tab
+  """
+  tabId: String
+  """
+  tab name of recently pinned tab
+  """
+  tabName: String
+}
+
+type GroupResponse {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  A unique display name string for the user group
+  """
+  displayName: String
+  """
+  GUID of the group
+  """
+  id: String
+  """
+  Visibility of the group
+  """
+  visibility: String
+  """
+  Description of the group
+  """
+  description: String
+  """
+  Privileges assigned to the group
+  """
+  privileges: [String]
+  """
+  The organizations that user belongs to
+  """
+  orgs: [OrgType]
+  """
+  Name of the group to which is added
+  """
+  groups: [GroupNameAndID]
+  """
+  User Group Information by Id or Name.
+  """
+  users: [UserNameAndID]
+  """
+  Liveboards assigned to the group
+  """
+  assignedLiveboards: [LiveboardNameAndID]
+  userGroupContent: JSON
+  """
+  Tags assigned to the group
+  """
+  tags: [String]
+  """
+  Indicates if the group is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the group is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the group is from external system
+  """
+  isExternal: Boolean
+  isDeprecated: Boolean
+  """
+  Indicates if the all the properties of group is provided
+  """
+  complete: Boolean
+  """
+  Indicates if the group is system principal
+  """
+  isSystemPrincipal: Boolean
+  """
+  Indicates the type of group
+  """
+  type: String
+  """
+  Indicates the type of parent object
+  """
+  parenttype: String
+  groupIdx: Int
+  metadataVersion: Int
+  """
+  Tenant id associated with the group
+  """
+  tenantId: String
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when group was created
+  """
+  created: Float
+  """
+  Date and time of last modification of the group
+  """
+  modified: Float
+  """
+  Author of user group
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user group details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the user group
+  """
+  owner: UserNameAndID
+}
+
+type LiveboardNameAndID {
+  """
+  Name of the liveboard
+  """
+  name: String
+  """
+  GUID of the liveboard
+  """
+  id: String
+}
+
+enum PrincipalGroupType {
+  LOCAL_GROUP
+  TENANT_GROUP
+}
+
+type MetadataTagResponse {
+  """
+  Name of the tag
+  """
+  name: String
+  """
+  GUID of the tag
+  """
+  id: String
+  """
+  State associated with the tag
+  """
+  clientState: ClientState
+  indexVersion: Float
+  generationNum: Float
+  """
+  Indicates if the tag is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the tag is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the tag is from external system
+  """
+  isExternal: Boolean
+  isDeprecated: Boolean
+  """
+  Date and time when group was created
+  """
+  created: Float
+  """
+  Date and time of last modification of the group
+  """
+  modified: Float
+  """
+  The user which last modified the tag details
+  """
+  modifiedBy: TagNameAndID
+  """
+  Author of tag
+  """
+  author: TagNameAndID
+  """
+  The owner of the tag
+  """
+  owner: TagNameAndID
+}
+
+type ClientState {
+  """
+  Color assigned to the tag
+  """
+  color: String
+}
+
+type TagNameAndID {
+  """
+  Name of the group to which group  is added
+  """
+  name: String
+  """
+  GUID of the group to which group  is added
+  """
+  id: String
+}
+
+input TsObjectInput {
+  """
+  GUID of the metadata object
+  """
+  id: String!
+  """
+  Type of the metadata object
+  """
+  type: TsObject!
+}
+
+enum TsObject {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT
+  CONNECTION
+}
+
+enum FormatType {
+  YAML
+  JSON
+}
+
+enum ImportPolicy {
+  PARTIAL
+  ALL_OR_NONE
+  VALIDATE_ONLY
+}
+
+type HomeLiveboardResponse {
+  """
+  Name of the user
+  """
+  userName: String
+  """
+  The GUID of the user
+  """
+  userId: String
+  """
+  Name of the liveboard
+  """
+  liveboardName: String
+  """
+  The GUID of the liveboard
+  """
+  liveboardId: String
+}
+
+enum SortBy {
+  DEFAULT
+  NAME
+  DISPLAY_NAME
+  AUTHOR
+  CREATED
+  MODIFIED
+  LAST_ACCESSED
+  SYNCED
+  VIEWS
+  NONE
+  USER_STATE
+  ROW_COUNT
+}
+
+enum SortOrder {
+  DEFAULT
+  ASC
+  DESC
+}
+
+enum TsObjectGet {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT_ALL
+  DATAOBJECT_WORKSHEET
+  DATAOBJECT_TABLE
+  DATAOBJECT_USER_DEFINED
+  DATAOBJECT_VIEW
+  DATAOBJECT_CALENDAR_TABLE
+  COLUMN_ALL
+  COLUMN_WORKSHEET
+  COLUMN_TABLE
+  COLUMN_USER_DEFINED
+  COLUMN_VIEW
+  COLUMN_CALENDAR_TABLE
+  JOIN
+  CONNECTION
+  TAG
+  USER
+  USER_GROUP
+}
+
+enum BlankTrueFalse {
+  True
+  False
+}
+
+input AccessLevelInput {
+  """
+  Username or name of the user group
+  """
+  name: String
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Type of access detail provided
+  """
+  type: AccessType
+  """
+  Minimum access level that the specified user or user group has. If no input is provided then minimum access of READ_ONLY will be considered.
+  """
+  access: AccessLevel
+}
+
+enum AccessType {
+  USER
+  USER_GROUP
+}
+
+enum AccessLevel {
+  READ_ONLY
+  MODIFY
+}
+
+input TagNameAndIdInput {
+  """
+  Name of the tags
+  """
+  name: String
+  """
+  GUID of the tags
+  """
+  id: String
+}
+
+input NameAndIdInput {
+  """
+  Name of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+enum TsObjectDetailGet {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT
+  COLUMN
+  JOIN
+  CONNECTION
+  TAG
+  USER
+  USER_GROUP
+}
+
+type ConnectionResponse {
+  """
+  Name of the connection
+  """
+  name: String
+  """
+  Description associated with the connection
+  """
+  description: String
+  """
+  Type of the connection. The database associated with this type can be obtained from the response returned by the /tspublic/rest/v2/connection/types API endpoint.
+  """
+  type: String
+  """
+  GUID of the connection
+  """
+  id: String
+  """
+  Indicates if the data sync is scheduled for this connection
+  """
+  scheduled: Boolean
+  connectionType: String
+  """
+  Configuration properties of the connection
+  """
+  configuration: String
+  isExternal: Boolean
+  """
+  Indicates if the connection is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the connection is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the connection is hideen
+  """
+  isHidden: Boolean
+  """
+  Indicates if the all the properties of connection is provided
+  """
+  complete: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when the connection was created
+  """
+  created: String
+  """
+  Date and time of last modification of the connection
+  """
+  modified: String
+  """
+  Author of the connection
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the connection details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the connection
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the connection
+  """
+  tags: [String]
+  """
+  List of tables linked to this connection
+  """
+  tables: [tableList]
+}
+
+enum DataConnection {
+  SNOWFLAKE
+  AMAZON_REDSHIFT
+  GOOGLE_BIGQUERY
+  AZURE_SYNAPSE
+  TERADATA
+  STARBURST
+  SAP_HANA
+  ORACLE_ADW
+  DATABRICKS
+  DENODO
+  DREMIO
+}
+
+type CreateConnectionResponse {
+  """
+  Name of the connection
+  """
+  name: String
+  """
+  Description associated with the connection
+  """
+  description: String
+  """
+  Type of the connection. The database associated with this type can be obtained from the response returned by the /tspublic/rest/v2/connection/types API endpoint.
+  """
+  type: String
+  """
+  GUID of the connection
+  """
+  id: String
+  """
+  Indicates if the data sync is scheduled for this connection
+  """
+  scheduled: Boolean
+  connectionType: String
+  """
+  Configuration properties of the connection
+  """
+  configuration: String
+  isExternal: Boolean
+  """
+  Indicates if the connection is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the connection is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the connection is hideen
+  """
+  isHidden: Boolean
+  """
+  Indicates if the all the properties of connection is provided
+  """
+  complete: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when user account was created
+  """
+  created: String
+  """
+  Date and time of last modification of user account
+  """
+  modified: String
+  """
+  Author of user account
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user account details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the user account
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the connection
+  """
+  tags: [String]
+  """
+  List of tables linked to this connection and details of the columns in the table
+  """
+  tables: [String]
+}
+
+input AddTableInput {
+  """
+  Name of the table
+  """
+  name: String!
+  """
+  Name of the database in the data platform
+  """
+  dbName: String!
+  """
+  Name of the schema in the database
+  """
+  schemaName: String!
+  """
+  A JSON array of column details
+  """
+  columns: [ColumnsInput]!
+}
+
+input TableInput {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  GUID of the Table
+  """
+  id: String
+}
+
+type ConnectionTableResponse {
+  """
+  Connection id
+  """
+  id: String
+  """
+  List of databases
+  """
+  database: [ConnectionDatabaseType]
+}
+
+type ConnectionTableColumnsResponse {
+  """
+  Connection id
+  """
+  id: String
+  """
+  List of table details
+  """
+  table: [ConnectionColumnsShema]
+}
+
+enum FormatData {
+  COMPACT
+  FULL
+}
+
+type AnswerQueryResponse {
+  """
+  The name of the saved Answer
+  """
+  name: String
+  """
+  The GUID of the saved Answer
+  """
+  id: String
+  """
+  SQL query associated with the saved Answer
+  """
+  querySql: String
+}
+
+type LiveboardQueryResponse {
+  """
+  The name of the Liveboard
+  """
+  name: String
+  """
+  The GUID of the Liveboard
+  """
+  id: String
+  """
+  SQL query associated with the saved Answer
+  """
+  viz: [VizType]
+}
+
+"""
+A JSON object of name or GUIDs of the current owner of the objects. When both are given then id is considered.
+
+If a list of object ids are provided as input for TsObjectId, then only for those ids that have owner as the value provided in fromUser, the owner will be changed.
+
+Provide either name or id as input. When both are given user id will be considered.
+"""
+input FromUserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+"""
+A JSON object of name or GUIDs of the new owner for the objects. When both are given then id is considered.
+"""
+input ToUserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+type AdminsyncPrincipalResponse {
+  """
+  Username of list of users added
+  """
+  usersAdded: [String]
+  """
+  Username of list of users deleted
+  """
+  usersDeleted: [String]
+  """
+  Username of list of users updated
+  """
+  usersUpdated: [String]
+  """
+  Group name of list of groups added
+  """
+  groupsAdded: [String]
+  """
+  Group name of list of groups deleted
+  """
+  groupsDeleted: [String]
+  """
+  Group name of list of groups updated
+  """
+  groupsUpdated: [String]
+}
+
+input pdfOptionsInput {
+  """
+  Page orientation for the PDF. Default: PORTRAIT
+  """
+  orientation: orientationValues = PORTRAIT
+  """
+  When set to true, only the first page of the tables is displayed in the file.
+
+  This setting is applicable only when generating report for specific visualization ids. Default: false
+  """
+  truncateTables: Boolean = false
+  """
+  Include customized wide logo if available in the footer. Default: true
+  """
+  includeLogo: Boolean = true
+  """
+  Footer text to include in the footer of each page of the PDF.
+  """
+  footerText: String
+  """
+  When set to true, the page number is included in the footer of each page. Default: true
+  """
+  includePageNumber: Boolean = true
+  """
+  When set to true, a cover page with the Liveboard title is added in the PDF. Default: true
+  """
+  includeCoverPage: Boolean = true
+  """
+  When set to true, a second page with a list of all applied filters is added in the PDF. Default: true
+  """
+  includeFilterPage: Boolean = true
+}
+
+enum ReportFormat {
+  CSV
+  XLSX
+  PDF
+  PNG
+}
+
+enum LogsValues {
+  security_logs
+}
+
+type LogsResponse {
+  """
+  Date and time for the event in the log
+  """
+  date: String
+  """
+  Logged event at the time specified in JSON format. This includes, Event ID, A unique description of the event, for example, User login failed, Timestamp, User ID of the person initiating the event and IP address of the ThoughtSpot instance.
+  """
+  log: String
+}
+
+enum SecurityType {
+  LIVEBOARD
+  ANSWER
+  DATAOBJECT
+  COLUMN
+}
+
+input TsObjectSearchInput {
+  """
+  Type of the metadata objec
+  """
+  type: SecurityType!
+  """
+  A JSON Array of GUIDs of the metadata object
+  """
+  id: [String]!
+}
+
+type SecurityPermissionResponse {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  GUID of the owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+  """
+  An array of object with details of permission on users and user groups
+  """
+  permissions: [SecurityPermission]
+  """
+  The objects on which the primary object is dependent on
+  """
+  dependents: [SecuirityDependents]
+}
+
+type PrincipalSearchResponse {
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Name of the user or user group
+  """
+  name: String
+  """
+  Indicates the type of principal
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permissions: [PermissionsTypeSearch]
+}
+
+type OrgsResponse {
+  """
+  ID of the organization searched for
+  """
+  orgId: Int
+  """
+  Name of the organization searched for
+  """
+  orgName: String
+  """
+  Description associated with the organization
+  """
+  description: String
+  """
+  GUID of the ALL group in the organization
+  """
+  allGroupUserId: String
+  """
+  GUID of the admin group in the organization
+  """
+  defaultAdminUserGroupId: String
+  """
+  Indicates if the organization is active or not
+  """
+  active: Boolean
+}
+
+type CreateTableResponse {
+  logicalTableHeader: LogicalTableHeader
+  physicalTableId: String
+}
+
+enum ObjectDependency {
+  LIVEBOARD
+  DATAOBJECT
+  COLUMN
+  JOIN
+}
+
+input ConnectionTableColumnsInput {
+  """
+  Name of the database
+  """
+  dbName: String!
+  """
+  Name of the schema
+  """
+  schemaName: String!
+  """
+  Name of the table
+  """
+  name: String!
+}
+
+type OrgType {
+  """
+  Name of the organization
+  """
+  name: String
+  """
+  Id of the organization
+  """
+  id: Int
+}
+
+type tableList {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Type of the table
+  """
+  type: String
+  """
+  GUID of the table
+  """
+  id: String
+  """
+  Name of the database to which the table belongs
+  """
+  databaseStripe: String
+  """
+  Name of the schema to which the table belongs
+  """
+  schemaStripe: String
+  isExternal: Boolean
+  """
+  Indicates if the table is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the table is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the table is hideen
+  """
+  isHidden: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when the table was created
+  """
+  created: String
+  """
+  Date and time of last modification of the table
+  """
+  modified: String
+  """
+  Author of the table
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the table details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the tabe
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the table
+  """
+  tags: [String]
+}
+
+input ColumnsInput {
+  """
+  Name of the column
+  """
+  name: String!
+  """
+  Datatype of the column
+  """
+  dataType: String!
+}
+
+type ConnectionDatabaseType {
+  """
+  Name of the database
+  """
+  name: String
+  """
+  List of schemas
+  """
+  schema: [ConnectionTableSchema]
+}
+
+type ConnectionColumnsShema {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Name of the database
+  """
+  dbName: String
+  """
+  Name of the schema
+  """
+  schemaName: String
+  """
+  List of columns in the table
+  """
+  columns: [TableColumns]
+}
+
+type VizType {
+  """
+  The name of the visualization
+  """
+  name: String
+  """
+  The GUID of the visualization
+  """
+  id: String
+  """
+  SQL query associated with the visualization
+  """
+  querySql: String
+}
+
+enum orientationValues {
+  PORTRAIT
+  LANDSCAPE
+}
+
+type SecurityPermission {
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Name of the user or user group
+  """
+  name: String
+  """
+  Indicates the type of principal
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with this user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+
+type SecuirityDependents {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  Owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+  """
+
+  """
+  permissions: [DependentPermission]
+}
+
+type PermissionsTypeSearch {
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  An array of objects of type mentioned in type field
+  """
+  tsObject: [TsObjectTypeSerach]
+}
+
+type LogicalTableHeader {
+  id: String
+  name: String
+  author: String
+  authorName: String
+  authorDisplayName: String
+  created: Float
+  modified: Float
+  modifiedBy: String
+  generationNum: Int
+  owner: String
+  deleted: Boolean
+  hidden: Boolean
+  database: String
+  schema: String
+  type: String
+  subType: String
+}
+
+type ConnectionTableSchema {
+  """
+  Name of the schema
+  """
+  name: String
+  """
+  List of table details
+  """
+  table: [ConnectionColumn]
+}
+
+type TableColumns {
+  """
+  Name of the column
+  """
+  name: String
+  """
+  Datatype of the column
+  """
+  dataType: String
+}
+
+type GroupPermission {
+  """
+  GUID of the user group
+  """
+  id: String
+  """
+  Name of the user group
+  """
+  name: String
+  """
+  Indicates the permission which user group has on the object
+  """
+  permission: String
+}
+
+type DependentPermission {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with this user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+
+type TsObjectTypeSerach {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with the user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+
+type ConnectionColumn {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Type of the Table
+  """
+  type: String
+  """
+  List of columns in the table
+  """
+  column: [TableColumns]
+}

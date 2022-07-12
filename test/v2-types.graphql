@@ -1,0 +1,1336 @@
+scalar JSON
+scalar JSONObject
+scalar Long
+scalar GUID
+
+input GroupNameAndIDInput {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  GUID of the group
+  """
+  id: String
+}
+
+type GroupNameAndID {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  GUID of the group
+  """
+  id: String
+}
+
+type UserNameAndID {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+type GroupResponse {
+  """
+  Name of the group
+  """
+  name: String
+  """
+  A unique display name string for the user group
+  """
+  displayName: String
+  """
+  GUID of the group
+  """
+  id: String
+  """
+  Visibility of the group
+  """
+  visibility: String
+  """
+  Description of the group
+  """
+  description: String
+  """
+  Privileges assigned to the group
+  """
+  privileges: [String]
+  """
+  Name of the group to which is added
+  """
+  groups: [GroupNameAndID]
+  """
+  User Group Information by Id or Name.
+  """
+  users: [UserNameAndID]
+  """
+  Liveboards assigned to the group
+  """
+  assignedLiveboards: [LiveboardNameAndID]
+  userGroupContent: JSON
+
+  """
+  Tags assigned to the group
+  """
+  tags: [String]
+  """
+  Indicates if the group is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the group is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the group is from external system
+  """
+  isExternal: Boolean
+
+  isDeprecated: Boolean
+  """
+  Indicates if the all the properties of group is provided
+  """
+  complete: Boolean
+  """
+  Indicates if the group is system principal
+  """
+  isSystemPrincipal: Boolean
+  """
+  Indicates the type of group
+  """
+  type: String
+  """
+  Indicates the type of parent object
+  """
+  parenttype: String
+  groupIdx: Int
+  metadataVersion: Int
+  """
+  Tenant id associated with the group
+  """
+  tenantId: String
+
+  indexVersion: Float
+
+  generationNum: Float
+  """
+  Date and time when group was created
+  """
+  created: Float
+  """
+  Date and time of last modification of the group
+  """
+  modified: Float
+  """
+  Author of user group
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user group details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the user group
+  """
+  owner: UserNameAndID
+}
+
+input UserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+"""
+A JSON object of name or GUIDs of the current owner of the objects. When both are given then id is considered. \n\n If a list of object ids are provided as input for TsObjectId, then only for those ids that have owner as the value provided in fromUser, the owner will be changed. \n\n Provide either name or id as input. When both are given user id will be considered.
+"""
+input FromUserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+"""
+A JSON object of name or GUIDs of the new owner for the objects. When both are given then id is considered.
+"""
+input ToUserNameAndIDInput {
+  """
+  Username of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+type LiveboardNameAndID {
+  """
+  Name of the liveboard
+  """
+  name: String
+  """
+  GUID of the liveboard
+  """
+  id: String
+}
+
+enum PrincipalGroupType {
+  LOCAL_GROUP
+  TENANT_GROUP
+}
+
+enum PrincipalVisibilityType {
+  DEFAULT
+  NON_SHARABLE
+  SHARABLE
+}
+
+enum Privilages {
+  RANALYSIS
+  DATAMANAGEMENT
+  APPLICATION_ADMINISTRATION
+  USER_ADMINISTRATION
+  SYSTEMMANAGEMENT
+  SYSTEM_INFO_ADMINISTRATION
+  AUTHORING
+  BACKUP_ADMINISTRATION
+  SHAREWITHALL
+  DEVELOPER
+  JOBSCHEDULING
+  GROUP_ADMINISTRATION
+  BYPASSRLS
+  EXPERIMENTALFEATUREPRIVILEGE
+  A3ANALYSIS
+  USERDATAUPLOADING
+  DATADOWNLOADING
+  DISABLE_PINBOARD_CREATION
+  ADMINISTRATION
+}
+type UserResponse {
+  """
+  Username of the user account
+  """
+  name: String
+  """
+  Display name of the user account
+  """
+  displayName: String
+  """
+  GUID of the user account
+  """
+  id: String
+  """
+  Visibility of the user account
+  """
+  visibility: String
+  """
+  Email of the user account
+  """
+  mail: String
+  """
+  Name of the group to which user account is added
+  """
+  groups: [GroupNameAndID]
+  """
+  Privileges assigned to user account
+  """
+  privileges: [String]
+  """
+  Tags assigned to the user
+  """
+  tags: [String]
+  """
+  Indicates if the user account is active or inactive
+  """
+  state: String
+  """
+  Indicates if the email should be sent when object is shared with the user
+  """
+  notifyOnShare: Boolean
+  """
+  Indicates if the walk me should be shown when logging in
+  """
+  showWalkMe: Boolean
+  """
+  Indicates if the onboarding is completed for the user
+  """
+  analystOnboardingComplete: Boolean
+  """
+  Indicates if the use is logging in for the first time
+  """
+  firstLogin: Int
+  """
+  Indicates if the welcome email is sent to email associated with the user account
+  """
+  welcomeEmailSent: Boolean
+  """
+  Indicates if the user account is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the user account is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the user account is from external system
+  isDeprecated
+  """
+  isExternal: Boolean
+
+  isDeprecated: Boolean
+  """
+  Indicates if the all the properties of user account is provided
+  """
+  complete: Boolean
+  """
+  Indicates if the user account is super user
+  """
+  isSuperUser: Boolean
+  """
+  Indicates if the user account is system principal
+  """
+  isSystemPrincipal: Boolean
+  """
+  Indicates the type of user account
+  """
+  type: String
+  """
+  Indicates the type of parent object
+  """
+  parenttype: String
+  """
+  Tenant id associated with the user account
+  """
+  tenantId: String
+
+  indexVersion: Float
+
+  generationNum: Float
+  """
+  Date and time when user account was created
+  """
+  created: Float
+  """
+  Date and time of last modification of user account
+  """
+  modified: Float
+  """
+  Author of the user account
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user account details
+  """
+  modifiedBy: UserNameAndID
+  """
+  Owner of the user account
+  """
+  owner: UserNameAndID
+}
+
+enum PrincipalType {
+  UNKNOWN
+  LDAP_USER
+  SAML_USER
+  OIDC_USER
+  LOCAL_USER
+}
+
+enum StateType {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  LOCKED
+  PENDING
+}
+
+enum TrueFalse {
+  True
+  False
+}
+
+type PinboardDetails {
+  """
+  pinboard id of recently pinned pinboard
+  """
+  pinboardId: String
+  """
+  pinboard name of recently pinned pinboard
+  """
+  pinboardName: String
+}
+
+enum AuthTokenType {
+  Cookie
+  Bearer
+}
+"""
+Login response
+"""
+type SessionLoginResponse {
+  """
+  Username of the user account for which token is generated
+  """
+  userName: String
+  """
+  Bearer token generated. This will be blank when token type is Cookie
+  """
+  token: String
+  """
+  Date and time at which the token is generated
+  """
+  tokenCreatedTime: String
+  """
+  Duration in seconds after which the token expires
+  """
+  tokenExpiryDuration: String
+  """
+  Type of token generated
+  """
+  tokenType: String
+}
+
+enum AccessLevelEnum {
+  FULL
+  REPORT_BOOK_VIEW
+}
+
+type MetadataTagResponse {
+  """
+  Name of the tag
+  """
+  name: String
+  """
+  GUID of the tag
+  """
+  id: String
+  """
+  State associated with the tag
+  """
+  clientState: ClientState
+
+  indexVersion: Float
+
+  generationNum: Float
+  """
+  Indicates if the tag is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the tag is hidden
+  """
+  isHidden: Boolean
+  """
+  Indicates if the tag is from external system
+  """
+  isExternal: Boolean
+
+  isDeprecated: Boolean
+  """
+  Date and time when group was created
+  """
+  created: Float
+  """
+  Date and time of last modification of the group
+  """
+  modified: Float
+  """
+  The user which last modified the tag details
+  """
+  modifiedBy: TagNameAndID
+  """
+  Author of tag
+  """
+  author: TagNameAndID
+  """
+  The owner of the tag
+  """
+  owner: TagNameAndID
+}
+
+type ClientState {
+  """
+  Color assigned to the tag
+  """
+  color: String
+}
+
+type TagNameAndID {
+  """
+  Name of the group to which group  is added
+  """
+  name: String
+  """
+  GUID of the group to which group  is added
+  """
+  id: String
+}
+
+input TsObjectInput {
+  """
+  GUID of the metadata object
+  """
+  id: String!
+  """
+  Type of the metadata object
+  """
+  type: TsObject!
+}
+
+enum TsObject {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT
+  CONNECTION
+}
+
+enum FormatType {
+  YAML
+  JSON
+}
+
+enum ImportPolicy {
+  PARTIAL
+  ALL_OR_NONE
+  VALIDATE_ONLY
+}
+
+type HomeLiveboardResponse {
+  """
+  Name of the user
+  """
+  userName: String
+  """
+  The GUID of the user
+  """
+  userId: String
+  """
+  Name of the liveboard
+  """
+  liveboardName: String
+  """
+  The GUID of the liveboard
+  """
+  liveboardId: String
+}
+
+enum SortBy {
+  DEFAULT
+  NAME
+  DISPLAY_NAME
+  AUTHOR
+  CREATED
+  MODIFIED
+  LAST_ACCESSED
+  SYNCED
+  VIEWS
+  NONE
+  USER_STATE
+  ROW_COUNT
+}
+
+enum SortOrder {
+  DEFAULT
+  ASC
+  DESC
+}
+
+enum TsObjectGet {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT_ALL
+  DATAOBJECT_WORKSHEET
+  DATAOBJECT_TABLE
+  DATAOBJECT_USER_DEFINED
+  DATAOBJECT_VIEW
+  DATAOBJECT_CALENDAR_TABLE
+  COLUMN_ALL
+  COLUMN_WORKSHEET
+  COLUMN_TABLE
+  COLUMN_USER_DEFINED
+  COLUMN_VIEW
+  COLUMN_CALENDAR_TABLE
+  JOIN
+  CONNECTION
+  TAG
+  USER
+  USER_GROUP
+}
+
+enum BlankTrueFalse {
+  True
+  False
+}
+
+input AccessLevelInput {
+  """
+  Username or name of the user group
+  """
+  name: String
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Type of access detail provided
+  """
+  type: AccessType
+  """
+  Minimum access level that the specified user or user group has. If no input is provided then minimum access of READ_ONLY will be considered.
+  """
+  access: AccessLevel
+}
+
+input pdfOptionsInput {
+  """
+  Page orientation for the PDF. Default: PORTRAIT
+  """
+  orientation: orientationValues = PORTRAIT
+  """
+  When set to true, only the first page of the tables is displayed in the file. \n\n This setting is applicable only when generating report for specific visualization ids. Default: false
+  """
+  truncateTables: Boolean = false
+  """
+  Include customized wide logo if available in the footer. Default: true
+  """
+  includeLogo: Boolean = true
+  """
+  Footer text to include in the footer of each page of the PDF.
+  """
+  footerText: String
+  """
+  When set to true, the page number is included in the footer of each page. Default: true
+  """
+  includePageNumber: Boolean = true
+  """
+  When set to true, a cover page with the Liveboard title is added in the PDF. Default: true
+  """
+  includeCoverPage: Boolean = true
+  """
+  When set to true, a second page with a list of all applied filters is added in the PDF. Default: true
+  """
+  includeFilterPage: Boolean = true
+}
+
+enum AccessType {
+  USER
+  USER_GROUP
+}
+
+enum AccessLevel {
+  READ_ONLY
+  MODIFY
+}
+
+enum orientationValues {
+  PORTRAIT
+  LANDSCAPE
+}
+
+input TagNameAndIdInput {
+  """
+  Name of the tags
+  """
+  name: String
+  """
+  GUID of the tags
+  """
+  id: String
+}
+
+input NameAndIdInput {
+  """
+  Name of the user
+  """
+  name: String
+  """
+  GUID of the user
+  """
+  id: String
+}
+
+enum TsObjectDetailGet {
+  ANSWER
+  LIVEBOARD
+  DATAOBJECT
+  COLUMN
+  JOIN
+  CONNECTION
+  TAG
+  USER
+  USER_GROUP
+}
+
+type ConnectionResponse {
+  """
+  Name of the connection
+  """
+  name: String
+  """
+  Description associated with the connection
+  """
+  description: String
+  """
+  Type of the connection. The database associated with this type can be obtained from the response returned by the /tspublic/rest/v2/connection/types API endpoint.
+  """
+  type: String
+  """
+  GUID of the connection
+  """
+  id: String
+  """
+  Indicates if the data sync is scheduled for this connection
+  """
+  scheduled: Boolean
+  connectionType: String
+  """
+  Configuration properties of the connection
+  """
+  configuration: String
+  isExternal: Boolean
+  """
+  Indicates if the connection is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the connection is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the connection is hideen
+  """
+  isHidden: Boolean
+  """
+  Indicates if the all the properties of connection is provided
+  """
+  complete: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when the connection was created
+  """
+  created: String
+  """
+  Date and time of last modification of the connection
+  """
+  modified: String
+  """
+  Author of the connection
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the connection details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the connection
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the connection
+  """
+  tags: [String]
+  """
+  List of tables linked to this connection
+  """
+  tables: [tableList]
+}
+
+type tableList {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Type of the table
+  """
+  type: String
+  """
+  GUID of the table
+  """
+  id: String
+  """
+  Name of the database to which the table belongs
+  """
+  databaseStripe: String
+  """
+  Name of the schema to which the table belongs
+  """
+  schemaStripe: String
+  isExternal: Boolean
+  """
+  Indicates if the table is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the table is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the table is hideen
+  """
+  isHidden: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when the table was created
+  """
+  created: String
+  """
+  Date and time of last modification of the table
+  """
+  modified: String
+  """
+  Author of the table
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the table details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the tabe
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the table
+  """
+  tags: [String]
+}
+
+enum DataConnection {
+  SNOWFLAKE
+  AMAZON_REDSHIFT
+  GOOGLE_BIGQUERY
+  AZURE_SYNAPSE
+  TERADATA
+  STARBURST
+  SAP_HANA
+  ORACLE_ADW
+  DATABRICKS
+  DENODO
+}
+
+type CreateConnectionResponse {
+  """
+  Name of the connection
+  """
+  name: String
+  """
+  Description associated with the connection
+  """
+  description: String
+  """
+  Type of the connection. The database associated with this type can be obtained from the response returned by the /tspublic/rest/v2/connection/types API endpoint.
+  """
+  type: String
+  """
+  GUID of the connection
+  """
+  id: String
+  """
+  Indicates if the data sync is scheduled for this connection
+  """
+  scheduled: Boolean
+  connectionType: String
+  """
+  Configuration properties of the connection
+  """
+  configuration: String
+  isExternal: Boolean
+  """
+  Indicates if the connection is deprecated
+  """
+  isDeprecated: Boolean
+  """
+  Indicates if the connection is deleted
+  """
+  isDeleted: Boolean
+  """
+  Indicates if the connection is hideen
+  """
+  isHidden: Boolean
+  """
+  Indicates if the all the properties of connection is provided
+  """
+  complete: Boolean
+  indexVersion: Float
+  generationNum: Float
+  """
+  Date and time when user account was created
+  """
+  created: String
+  """
+  Date and time of last modification of user account
+  """
+  modified: String
+  """
+  Author of user account
+  """
+  author: UserNameAndID
+  """
+  The user which last modified the user account details
+  """
+  modifiedBy: UserNameAndID
+  """
+  The owner of the user account
+  """
+  owner: UserNameAndID
+  """
+  List of tags assigned to the connection
+  """
+  tags: [String]
+  """
+  List of tables linked to this connection and details of the columns in the table
+  """
+  tables: [String]
+}
+input AddTableInput {
+  """
+  Name of the table
+  """
+  name: String!
+  """
+  Name of the database in the data platform
+  """
+  dbName: String!
+  """
+  Name of the schema in the database
+  """
+  schemaName: String!
+  """
+  A JSON array of column details
+  """
+  columns: [ColumnsInput]!
+}
+input ColumnsInput {
+  """
+  Name of the column
+  """
+  name: String!
+  """
+  Datatype of the column
+  """
+  dataType: String!
+}
+input TableInput {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  GUID of the Table
+  """
+  id: String
+}
+enum FormatData {
+  COMPACT
+  FULL
+}
+
+type AdminsyncPrincipalResponse {
+  """
+  Username of list of users added
+  """
+  usersAdded: [String]
+  """
+  Username of list of users deleted
+  """
+  usersDeleted: [String]
+  """
+  Username of list of users updated
+  """
+  usersUpdated: [String]
+  """
+  Group name of list of groups added
+  """
+  groupsAdded: [String]
+  """
+  Group name of list of groups deleted
+  """
+  groupsDeleted: [String]
+  """
+  Group name of list of groups updated
+  """
+  groupsUpdated: [String]
+}
+
+enum ReportFormat {
+  CSV
+  XLSX
+  PDF
+  PNG
+}
+enum LogsValues {
+  security_logs
+}
+type LogsResponse {
+  """
+  Date and time for the event in the log
+  """
+  date: String
+  """
+  Logged event at the time specified in JSON format. This includes, Event ID, A unique description of the event, for example, User login failed, Timestamp, User ID of the person initiating the event and IP address of the ThoughtSpot instance.
+  """
+  log: String
+}
+
+type ConnectionTableResponse {
+  """
+  Connection id
+  """
+  id: String
+  """
+  List of databases
+  """
+  database: [ConnectionDatabaseType]
+}
+type ConnectionDatabaseType {
+  """
+  Name of the database
+  """
+  name: String
+  """
+  List of schemas
+  """
+  schema: [ConnectionTableSchema]
+}
+type ConnectionTableSchema {
+  """
+  Name of the schema
+  """
+  name: String
+  """
+  List of table details
+  """
+  table: [ConnectionColumn]
+}
+type ConnectionColumn {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Type of the Table
+  """
+  type: String
+  """
+  List of columns in the table
+  """
+  column: [TableColumns]
+}
+type TableColumns {
+  """
+  Name of the column
+  """
+  name: String
+  """
+  Datatype of the column
+  """
+  dataType: String
+}
+input ConnectionTableColumnsInput {
+  """
+  Name of the database
+  """
+  dbName: String!
+  """
+  Name of the schema
+  """
+  schemaName: String!
+  """
+  Name of the table
+  """
+  name: String!
+}
+
+type ConnectionTableColumnsResponse {
+  """
+  Connection id
+  """
+  id: String
+  """
+  List of table details
+  """
+  table: [ConnectionColumnsShema]
+}
+enum SecurityType {
+  LIVEBOARD
+  ANSWER
+  DATAOBJECT
+  COLUMN
+}
+input TsObjectSearchInput {
+  """
+  Type of the metadata objec
+  """
+  type: SecurityType!
+  """
+  A JSON Array of GUIDs of the metadata object
+  """
+  id: [String]!
+}
+type ConnectionColumnsShema {
+  """
+  Name of the table
+  """
+  name: String
+  """
+  Name of the database
+  """
+  dbName: String
+  """
+  Name of the schema
+  """
+  schemaName: String
+  """
+  List of columns in the table
+  """
+  columns: [TableColumns]
+}
+type SecurityPermissionResponse {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  GUID of the owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+
+  """
+  An array of object with details of permission on users and user groups
+  """
+  permissions: [SecurityPermission]
+  """
+  The objects on which the primary object is dependent on
+  """
+  dependents: [SecuirityDependents]
+}
+
+type SecurityPermission {
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Name of the user or user group
+  """
+  name: String
+  """
+  Indicates the type of principal
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with this user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+
+type GroupPermission {
+  """
+  GUID of the user group
+  """
+  id: String
+  """
+  Name of the user group
+  """
+  name: String
+  """
+  Indicates the permission which user group has on the object
+  """
+  permission: String
+}
+type SecuirityDependents {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  Owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+  """
+
+  """
+  permissions: [DependentPermission]
+}
+
+type DependentPermission {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with this user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+type PrincipalSearchResponse {
+  """
+  GUID of the user or user group
+  """
+  id: String
+  """
+  Name of the user or user group
+  """
+  name: String
+  """
+  Indicates the type of principal
+  """
+  type: String
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permissions: [PermissionsTypeSearch]
+}
+
+type PermissionsTypeSearch {
+  """
+  Indicates the type of the object
+  """
+  type: String
+  """
+  An array of objects of type mentioned in type field
+  """
+  tsObject: [TsObjectTypeSerach]
+}
+type TsObjectTypeSerach {
+  """
+  GUID of the object
+  """
+  id: String
+  """
+  Name of the object
+  """
+  name: String
+  """
+  Owner of the object
+  """
+  owner: String
+  """
+  Author of the object
+  """
+  author: UserNameAndID
+  """
+  Indicates the permission which user or user group has on the object
+  """
+  permission: String
+
+  """
+  Indicates the permission which user or user group has on the object through sharing of the object with the user or user group
+  """
+  sharedPermission: String
+  """
+  An array of object with details of permission on the user groups to which the user or user group belongs
+  """
+  groupPermission: [GroupPermission]
+}
+type AnswerQueryResponse {
+  """
+  The name of the saved Answer
+  """
+  name: String
+  """
+  The GUID of the saved Answer
+  """
+  id: String
+  """
+  SQL query associated with the saved Answer
+  """
+  querySql: String
+}
+
+type LiveboardQueryResponse {
+  """
+  The name of the Liveboard
+  """
+  name: String
+  """
+  The GUID of the Liveboard
+  """
+  id: String
+  """
+  SQL query associated with the saved Answer
+  """
+  viz: [VizType]
+}
+type VizType {
+  """
+  The name of the visualization
+  """
+  name: String
+  """
+  The GUID of the visualization
+  """
+  id: String
+  """
+  SQL query associated with the visualization
+  """
+  querySql: String
+}
