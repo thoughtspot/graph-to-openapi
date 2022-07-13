@@ -15,7 +15,7 @@ directive @rest(
   """
   REST path for the generated API route.
   """
-  path: String = "/api/"
+  path: String = "/api/" # Can specify a default value.
   """
   API Method
   """
@@ -49,7 +49,7 @@ type Mutation {
     The updated display name
     """
     displayName: String
-  ): UserResponse @rest(path: "/user", method: "PUT", tag: "User")
+  ): UserResponse @rest(path: "/user", method: "PUT", tag: "User") # Define the openAPI spec config here.
 }
 
 type Query {
@@ -61,7 +61,7 @@ type Query {
   ): UserResponse @rest(path: "/user", method: "GET", tag: "User")
 }
 
-input UserResponse {
+type UserResponse {
   ...
 }
 ```
