@@ -4,6 +4,7 @@
   "description": "Get an OpenAPI 3.0 spec out of a graphql Schema",
   "main": "dist/index.js",
   "scripts": {
+    "check": "eslint 'src/**'",
     "test": "npm run build; jest",
     "build": "tsc -p .",
     "posttest": "cat ./coverage/lcov.info | coveralls"
@@ -34,8 +35,17 @@
   },
   "devDependencies": {
     "@types/jest": "^28.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
     "coveralls": "^3.1.1",
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^3.2.5",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.2",
+    "prettier": "^2.7.1",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
   }
