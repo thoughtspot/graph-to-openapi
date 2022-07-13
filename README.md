@@ -1,6 +1,6 @@
 # graph-to-openapi
 
-[![Coverage Status](https://coveralls.io/repos/github/thoughtspot/graph-to-openapi/badge.svg?branch=main)](https://coveralls.io/github/thoughtspot/graph-to-openapi?branch=main) ![npm (scoped)](https://img.shields.io/npm/v/@thoughtspot/graph-to-openapi) ![example branch parameter](https://github.com/thoughtspot/graph-to-openapi/actions/workflows/node.js.yml/badge.svg?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/thoughtspot/graph-to-openapi/badge.svg?branch=main)](https://coveralls.io/github/thoughtspot/graph-to-openapi?branch=main) [![npm (scoped)](https://img.shields.io/npm/v/@thoughtspot/graph-to-openapi)](https://www.npmjs.com/package/@thoughtspot/graph-to-openapi) ![example branch parameter](https://github.com/thoughtspot/graph-to-openapi/actions/workflows/node.js.yml/badge.svg?branch=main)
 
 Convert a Graphql Schema to OpenAPI Spec w/ customization hooks
 
@@ -67,12 +67,12 @@ type UserResponse {
 ```
 
 ```ts
-import { getOpenAPISpec } from "@thoughtspot/gql-to-openapi";
+import { getOpenAPISpec } from '@thoughtspot/gql-to-openapi';
 
 const openAPISpec = getOpenAPISpec({
-  schema,
-  info: {},
-  basePath: "/api/v1",
+    schema,
+    info: {},
+    basePath: '/api/v1',
 });
 
 fs.writeFile(fileName, openAPISpec);
