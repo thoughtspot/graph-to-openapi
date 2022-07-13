@@ -1,52 +1,52 @@
 {
-  "name": "@thoughtspot/graph-to-openapi",
-  "version": "0.2.0",
-  "description": "Get an OpenAPI 3.0 spec out of a graphql Schema",
-  "main": "dist/index.js",
-  "scripts": {
-    "check": "eslint 'src/**'",
-    "test": "npm run build; jest",
-    "build": "tsc -p .",
-    "posttest": "cat ./coverage/lcov.info | coveralls"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thoughtspot/graph-to-openapi.git"
-  },
-  "keywords": [
-    "graphql",
-    "openapi",
-    "rest",
-    "schema"
-  ],
-  "author": "ashish.shubham@thoughtspot.com",
-  "license": "SEE LICENSE IN LICENSE.md",
-  "bugs": {
-    "url": "https://github.com/thoughtspot/graph-to-openapi/issues"
-  },
-  "homepage": "https://github.com/thoughtspot/graph-to-openapi#readme",
-  "dependencies": {
-    "@graphql-tools/graphql-file-loader": "^7.4.0",
-    "@graphql-tools/load": "^7.7.0",
-    "@graphql-tools/schema": "^8.5.0",
-    "@graphql-tools/utils": "^8.8.0",
-    "graphql": "^16.5.0",
-    "url-join": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^28.1.4",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
-    "coveralls": "^3.1.1",
-    "eslint": "^8.19.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-typescript": "^3.2.5",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "jest": "^28.1.2",
-    "prettier": "^2.7.1",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.7.4"
-  }
+    "name": "@thoughtspot/graph-to-openapi",
+    "version": "0.2.0",
+    "description": "Get an OpenAPI 3.0 spec out of a graphql Schema",
+    "main": "dist/index.js",
+    "scripts": {
+        "check": "eslint 'src/**'",
+        "test": "npm run check; jest",
+        "build": "tsc -p .",
+        "posttest": "cat ./coverage/lcov.info | coveralls"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thoughtspot/graph-to-openapi.git"
+    },
+    "keywords": [
+        "graphql",
+        "openapi",
+        "rest",
+        "schema"
+    ],
+    "author": "ashish.shubham@thoughtspot.com",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "bugs": {
+        "url": "https://github.com/thoughtspot/graph-to-openapi/issues"
+    },
+    "homepage": "https://github.com/thoughtspot/graph-to-openapi#readme",
+    "dependencies": {
+        "@graphql-tools/graphql-file-loader": "^7.4.0",
+        "@graphql-tools/load": "^7.7.0",
+        "@graphql-tools/schema": "^8.5.0",
+        "@graphql-tools/utils": "^8.8.0",
+        "graphql": "^16.5.0",
+        "url-join": "^5.0.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^28.1.4",
+        "@typescript-eslint/eslint-plugin": "^5.30.6",
+        "@typescript-eslint/parser": "^5.30.6",
+        "coveralls": "^3.1.1",
+        "eslint": "^8.19.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-import-resolver-typescript": "^3.2.5",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "jest": "^28.1.2",
+        "prettier": "^2.7.1",
+        "ts-jest": "^28.0.5",
+        "typescript": "^4.7.4"
+    }
 }
