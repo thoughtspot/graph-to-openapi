@@ -4,6 +4,7 @@ import {
     isInputObjectType,
     isIntrospectionType,
     GraphQLObjectType,
+    GraphQLNamedType,
 } from 'graphql';
 import { join } from 'path';
 import { applyDirectiveTransforms, SpecInfo } from './directives';
@@ -40,6 +41,7 @@ export function getOpenAPISpec({
         security: [],
         servers: [],
     };
+    const routeMap = {};
     const { Query, Mutation, ...types } = schema.getTypeMap();
     Object.keys(types).forEach((typeName) => {
         const type = types[typeName];
@@ -55,7 +57,37 @@ export function getOpenAPISpec({
         ...(Query as GraphQLObjectType).getFields(),
         ...(Mutation as GraphQLObjectType).getFields(),
     };
-    Object.keys(operations).forEach((operationName) => {
+    addPathsToSpec(
+        (Query as GraphQLObjectType).getFields(),
+        spec,
+        routeMap,
+        basePath,
+        schema,
+        Query.name,
+    );
+    addPathsToSpec(
+        (Mutation as GraphQLObjectType).getFields(),
+        spec,
+        routeMap,
+        basePath,
+        schema,
+        Mutation.name,
+    );
+    return {
+        spec,
+        routeMap,
+    };
+}
+
+function addPathsToSpec(
+    operations: { [key: string]: any },
+    spec: any,
+    routeMap: { [key: string]: any },
+    basePath: string,
+    schema: GraphQLSchema,
+    type: string,
+) {
+    Object.keys(operations).forEach((operationName: string) => {
         const operation = operations[operationName];
         const specInfo: SpecInfo = operation.extensions.specInfo as SpecInfo;
         if (!specInfo) {
@@ -64,6 +96,10 @@ export function getOpenAPISpec({
         const path = join(basePath, specInfo.path);
         const method = specInfo.method.toLowerCase();
         const useRequestBody = ['post', 'patch', 'put'].includes(method);
+        routeMap[`${type}.${operationName}`] = {
+            method,
+            path: specInfo.path,
+        };
         spec.paths[path] = {
             [method]: buildPathFromOperation({
                 operation,
@@ -74,5 +110,4 @@ export function getOpenAPISpec({
             }),
         };
     });
-    return spec;
 }

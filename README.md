@@ -69,7 +69,7 @@ type UserResponse {
 ```ts
 import { getOpenAPISpec } from '@thoughtspot/gql-to-openapi';
 
-const openAPISpec = getOpenAPISpec({
+const { spec } = getOpenAPISpec({
     schema,
     info: {},
     basePath: '/api/v1',
