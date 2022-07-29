@@ -34,6 +34,8 @@ function specDirectiveTransformer(
                 directiveName,
             )?.[0];
 
+            (fieldConfig.extensions as any) =
+                (fieldConfig.extensions as any) || {};
             if (specDirective) {
                 (fieldConfig.extensions as any).specInfo = {
                     ...specDirective,

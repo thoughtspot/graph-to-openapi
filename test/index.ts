@@ -17,7 +17,7 @@ describe('should generate the correct api spec', () => {
             info: {},
             basePath: '/rest/v2',
         });
-        expect(Object.keys(spec.paths).length).toBe(91);
+        expect(Object.keys(spec.paths).length).toBe(92);
         expect(spec.paths['/rest/v2/v2/data/search'].post).toMatchObject({
             operationId: 'restapiV2__searchQueryData',
             description:
