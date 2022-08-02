@@ -18,7 +18,7 @@ export function buildPathFromOperation({
     return {
         operationId: operation.name,
         description: operation.description,
-        tags: [specInfo.tag],
+        tags: [specInfo.category],
         ...(useRequestBody
             ? {
                   requestBody: {

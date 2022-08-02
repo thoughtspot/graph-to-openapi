@@ -6,7 +6,7 @@ export interface SpecInfo {
     path: string;
     method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
     hidden?: boolean;
-    tag: string;
+    category: string;
 }
 
 function specDirectiveTransformer(

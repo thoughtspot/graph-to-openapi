@@ -2,7 +2,7 @@ directive @rest(
     path: String = "/v2/"
     method: String = "GET"
     hidden: Boolean = false
-    tag: String = ""
+    category: String = ""
 ) on FIELD_DEFINITION
 
 scalar JSON
@@ -18,7 +18,7 @@ type Query {
     Get Session object information
     """
     restapiV2__getSessionInfo: JSON
-        @rest(path: "/v2/session", method: "GET", tag: "Session")
+        @rest(path: "/v2/session", method: "GET", category: "Session")
     """
     To get the details of a specific user account by username or user id, use this endpoint. At Least one value is needed.  When both are given, user id will be considered to fetch user information
     """
@@ -31,7 +31,7 @@ type Query {
         The GUID of the user account to query
         """
         id: String
-    ): UserResponse @rest(path: "/v2/user", method: "GET", tag: "User")
+    ): UserResponse @rest(path: "/v2/user", method: "GET", category: "User")
     """
     To get the details of a specific group by name or id, use this endpoint.
     At Least one value needed.  When both are given id will be considered to fetch user information.
@@ -45,7 +45,7 @@ type Query {
         The GUID of the group to query.
         """
         id: String
-    ): GroupResponse @rest(path: "/v2/group", method: "GET", tag: "Group")
+    ): GroupResponse @rest(path: "/v2/group", method: "GET", category: "Group")
     """
     To get details of a specific tag, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
     """
@@ -59,7 +59,7 @@ type Query {
         """
         id: String
     ): MetadataTagResponse!
-        @rest(path: "/v2/metadata/tag", method: "GET", tag: "Metadata")
+        @rest(path: "/v2/metadata/tag", method: "GET", category: "Metadata")
     """
     To get the name and id of liveboard that is set as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
     """
@@ -76,7 +76,7 @@ type Query {
         @rest(
             path: "/v2/metadata/homeliveboard"
             method: "GET"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To get a list of objects with incomplete metadata, use this endpoint
@@ -173,7 +173,7 @@ type Query {
         @rest(
             path: "/v2/metadata/header/search"
             method: "POST"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     Use this endpoint to get header details of visualization charts for a given liveboard or answer. At least one of id or name of liveboard or answer is required. When both are given, then id will be considered.
@@ -184,7 +184,11 @@ type Query {
         """
         id: String!
     ): [JSON]!
-        @rest(path: "/v2/metadata/vizheader", method: "GET", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/vizheader"
+            method: "GET"
+            category: "Metadata"
+        )
     """
     Use this endpoint to get full details of metadata objects
     """
@@ -197,7 +201,8 @@ type Query {
         A JSON array of GUIDs of the objects.
         """
         id: [String]!
-    ): JSON @rest(path: "/v2/metadata/detail", method: "GET", tag: "Metadata")
+    ): JSON
+        @rest(path: "/v2/metadata/detail", method: "GET", category: "Metadata")
     """
     To get header detail of a metadata object, use this endpoint. You can provide as input selective fields to get the data for.
     """
@@ -214,7 +219,8 @@ type Query {
         Array of header field names that need to be included in the header response
         """
         outputFields: [String]
-    ): JSON @rest(path: "/v2/metadata/header", method: "GET", tag: "Metadata")
+    ): JSON
+        @rest(path: "/v2/metadata/header", method: "GET", category: "Metadata")
     """
     Use this endpoint to get full details of metadata objects
     """
@@ -243,7 +249,7 @@ type Query {
         @rest(
             path: "/v2/metadata/detail/search"
             method: "POST"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To list all the databases in Falcon, use this endpoint.
@@ -258,7 +264,7 @@ type Query {
         """
         database: String!
     ): [String]!
-        @rest(path: "/v2/database/schema", method: "GET", tag: "Database")
+        @rest(path: "/v2/database/schema", method: "GET", category: "Database")
     """
     To list all the tables in a schema of a database in Falcon, use this endpoint.
     """
@@ -272,7 +278,7 @@ type Query {
         """
         schema: String!
     ): [String]!
-        @rest(path: "/v2/database/table", method: "GET", tag: "Database")
+        @rest(path: "/v2/database/table", method: "GET", category: "Database")
     """
     Note: This endpoint is applicable only for on-prem deployments.
 
@@ -292,7 +298,11 @@ type Query {
         """
         table: String!
     ): JSON
-        @rest(path: "/v2/database/table/detail", method: "GET", tag: "Database")
+        @rest(
+            path: "/v2/database/table/detail"
+            method: "GET"
+            category: "Database"
+        )
     """
     To get the details of a specific connection use this endpoint
     """
@@ -302,7 +312,7 @@ type Query {
         """
         id: String!
     ): ConnectionResponse!
-        @rest(path: "/v2/connection", method: "GET", tag: "Connection")
+        @rest(path: "/v2/connection", method: "GET", category: "Connection")
     """
     To get the list of databases for a connection, use this endpoint.
 
@@ -314,7 +324,11 @@ type Query {
         """
         id: String!
     ): [String]
-        @rest(path: "/v2/connection/database", method: "GET", tag: "Connection")
+        @rest(
+            path: "/v2/connection/database"
+            method: "GET"
+            category: "Connection"
+        )
     """
     To programmatically retrieve data from ThoughtSpot using search query string, use this endpoint
     """
@@ -361,7 +375,7 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON @rest(path: "/v2/data/search", method: "POST", tag: "Data")
+    ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
     """
@@ -428,7 +442,7 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON @rest(path: "/v2/data/liveboard", method: "POST", tag: "Data")
+    ): JSON @rest(path: "/v2/data/liveboard", method: "POST", category: "Data")
     """
     To retrieve data related to a Answer from the ThoughtSpot system, you can use this endpoint
     """
@@ -471,7 +485,7 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON @rest(path: "/v2/data/answer", method: "POST", tag: "Data")
+    ): JSON @rest(path: "/v2/data/answer", method: "POST", category: "Data")
     """
     To retrieve the query SQL related to an Answer that is run on the data platform, you can use this endpoint
     """
@@ -481,7 +495,7 @@ type Query {
         """
         id: String!
     ): AnswerQueryResponse
-        @rest(path: "/v2/data/answer/querysql", method: "GET", tag: "Data")
+        @rest(path: "/v2/data/answer/querysql", method: "GET", category: "Data")
     """
     To retrieve the query SQL related to a Visualization in a Liveboard that is run on the data platform, you can use this endpoint
     """
@@ -495,7 +509,11 @@ type Query {
         """
         vizId: [String]
     ): LiveboardQueryResponse
-        @rest(path: "/v2/data/liveboard/querysql", method: "GET", tag: "Data")
+        @rest(
+            path: "/v2/data/liveboard/querysql"
+            method: "GET"
+            category: "Data"
+        )
     """
     To get details of the current configuration of a Thoughtspot cluster, use this endpoint.
     """
@@ -532,7 +550,8 @@ type Query {
         Example: To set the timestamp as July 1, 2021, 8 am, specify 1625126400000.
         """
         toEpoch: String
-    ): LogsResponse @rest(path: "/v2/logs/events", method: "GET", tag: "logs")
+    ): LogsResponse
+        @rest(path: "/v2/logs/events", method: "GET", category: "logs")
     """
     To get details of a specific custom action configured in the ThoughtSpot system, use this endpoint
     """
@@ -541,7 +560,12 @@ type Query {
         GUID of the custom action
         """
         id: String!
-    ): JSON @rest(path: "/v2/customaction", method: "GET", tag: "CustomActions")
+    ): JSON
+        @rest(
+            path: "/v2/customaction"
+            method: "GET"
+            category: "CustomActions"
+        )
     """
     To search custom actions available on a ThoughtSpot instance, use this endpoint
     """
@@ -556,7 +580,7 @@ type Query {
         @rest(
             path: "/v2/customaction/search"
             method: "POST"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     ThoughtSpot supports associating custom actions to Liveboards, answers, and worksheets. To get the details of the ThoughtSpot objects associated with a custom action, use this endpoint.
@@ -570,7 +594,7 @@ type Query {
         @rest(
             path: "/v2/customaction/association"
             method: "GET"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To list the permissions for user and user groups on an object, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
@@ -594,7 +618,7 @@ type Query {
         @rest(
             path: "/v2/security/permission/tsobject"
             method: "GET"
-            tag: "Security"
+            category: "Security"
         )
     """
     Use this endpoint to list the objects on which a user or user group has permission. The response will include only those objects on which the user or user group has either VIEW OR MODIFY permission.
@@ -614,7 +638,7 @@ type Query {
         @rest(
             path: "/v2/security/permission/principal"
             method: "GET"
-            tag: "Security"
+            category: "Security"
         )
     """
     To get the details of a specific organization by name or id, use this endpoint.
@@ -632,7 +656,7 @@ type Query {
         The ID of the organization.
         """
         id: Int
-    ): OrgsResponse @rest(path: "/v2/org", method: "GET", tag: "Org")
+    ): OrgsResponse @rest(path: "/v2/org", method: "GET", category: "Org")
 }
 
 type Mutation {
@@ -657,7 +681,7 @@ type Mutation {
         """
         rememberMe: Boolean
     ): SessionLoginResponse!
-        @rest(path: "/v2/session/login", method: "GET", tag: "Session")
+        @rest(path: "/v2/session/login", method: "GET", category: "Session")
     """
      To programmatically create session token for a user in ThoughtSpot, use this endpoint.
 
@@ -719,7 +743,7 @@ type Mutation {
         """
         orgId: String
     ): SessionLoginResponse!
-        @rest(path: "/v2/session/gettoken", method: "GET", tag: "Session")
+        @rest(path: "/v2/session/gettoken", method: "GET", category: "Session")
     """
     To log a user out of the current session, use this endpoint
     """
@@ -782,7 +806,8 @@ type Mutation {
         Type of user. LOCAL_USER indicates that the user is created locally in the ThoughtSpot system.
         """
         type: PrincipalType = LOCAL_USER
-    ): UserResponse! @rest(path: "/v2/user/create", method: "GET", tag: "User")
+    ): UserResponse!
+        @rest(path: "/v2/user/create", method: "GET", category: "User")
     """
     You can use this endpoint to programmatically modify an existing user account.  To modify a user, you require admin user privileges.
     At least one of User Id or username is mandatory. When both are given, then user id will be considered and username will be updated
@@ -832,7 +857,7 @@ type Mutation {
         Array of objects of groups that the user belong to.
         """
         groups: [GroupNameAndIDInput]
-    ): Boolean! @rest(path: "/v2/user/update", method: "PUT", tag: "User")
+    ): Boolean! @rest(path: "/v2/user/update", method: "PUT", category: "User")
     """
     To remove a user from the ThoughtSpot system, use this endpoint.
     At Least one value needed.  When both are given user id will be considered to delete user.
@@ -850,7 +875,8 @@ type Mutation {
         Unique identifier of the organization from which the user would be deleted. If no value is provided then user will be deleted from the organization associated with the login session.
         """
         orgId: Int
-    ): Boolean! @rest(path: "/v2/user/delete", method: "DELETE", tag: "User")
+    ): Boolean!
+        @rest(path: "/v2/user/delete", method: "DELETE", category: "User")
     """
     To programmatically add groups to an existing ThoughtSpot user use this endpoint.
     When you assign groups to a user, the user inherits the privileges assigned to those groups.
@@ -869,7 +895,8 @@ type Mutation {
         Array of objects of groups that the user belong to.
         """
         groups: [GroupNameAndIDInput]!
-    ): Boolean! @rest(path: "/v2/user/addgroup", method: "PUT", tag: "User")
+    ): Boolean!
+        @rest(path: "/v2/user/addgroup", method: "PUT", category: "User")
     """
     To programmatically remove groups from an existing ThoughtSpot user, use this API endpoint.
     The API removes only the user association. It does not delete the user or group from the Thoughtspot system
@@ -888,7 +915,8 @@ type Mutation {
         Array of objects of groups that the user belong to.
         """
         groups: [GroupNameAndIDInput]!
-    ): Boolean! @rest(path: "/v2/user/removegroup", method: "PUT", tag: "User")
+    ): Boolean!
+        @rest(path: "/v2/user/removegroup", method: "PUT", category: "User")
     """
     To get the details of a specific user account or all users in the ThoughtSpot system use this end point.
     """
@@ -945,7 +973,7 @@ type Mutation {
         Type of user. LOCAL_USER indicates that the user is created locally in the ThoughtSpot system.
         """
         type: String
-    ): JSON @rest(path: "/v2/user/search", method: "POST", tag: "User")
+    ): JSON @rest(path: "/v2/user/search", method: "POST", category: "User")
     """
     To change the password of a ThoughtSpot user account, use this endpoint.
 
@@ -969,7 +997,7 @@ type Mutation {
         """
         newPassword: String!
     ): Boolean!
-        @rest(path: "/v2/user/changepassword", method: "PUT", tag: "User")
+        @rest(path: "/v2/user/changepassword", method: "PUT", category: "User")
     """
     To programmatically add existing ThoughtSpot users to an organization, use this API endpoint.
 
@@ -986,7 +1014,7 @@ type Mutation {
         Array of objects. A JSON array of name of users or GUIDs of users or both. When both are given then id is considered
         """
         users: [UserNameAndIDInput]!
-    ): Boolean @rest(path: "/v2/user/addorg", method: "PUT", tag: "User")
+    ): Boolean @rest(path: "/v2/user/addorg", method: "PUT", category: "User")
     """
     To programmatically create a group in the ThoughtSpot system, use this API endpoint. Using this API, you can create a group and assign privileges and users. For ease of user management and access control, ThoughtSpot administrators can create groups and assign privileges to these groups. The privileges determine the actions that the users belonging to a group are allowed to do. ThoughtSpot also has a default group called ALL_GROUP. When you create new group in ThoughtSpot, they are automatically added to ALL_GROUP. You cannot delete the ALL_GROUP or remove members from it.
     """
@@ -1028,7 +1056,7 @@ type Mutation {
         """
         type: PrincipalGroupType = LOCAL_GROUP
     ): GroupResponse!
-        @rest(path: "/v2/group/create", method: "POST", tag: "Group")
+        @rest(path: "/v2/group/create", method: "POST", category: "Group")
     """
     You can use this endpoint to programmatically modify an existing user account.
     To modify a user, you require admin user privileges.
@@ -1075,7 +1103,8 @@ type Mutation {
         Type of user group. LOCAL_GROUP indicates that the user is created locally in the ThoughtSpot system.
         """
         type: PrincipalGroupType = LOCAL_GROUP
-    ): Boolean! @rest(path: "/v2/group/update", method: "PUT", tag: "Group")
+    ): Boolean!
+        @rest(path: "/v2/group/update", method: "PUT", category: "Group")
     """
     To remove a group from the ThoughtSpot system, send a DELETE request to this endpoint. At Least one value needed.  When both are given user id will be considered to fetch user information.
     """
@@ -1088,7 +1117,8 @@ type Mutation {
         The GUID of the group
         """
         id: String
-    ): Boolean! @rest(path: "/v2/group/delete", method: "DELETE", tag: "Group")
+    ): Boolean!
+        @rest(path: "/v2/group/delete", method: "DELETE", category: "Group")
     """
     To programmatically add privileges to an existing group, use API endpoint.
     When you assign privileges to a group,  all the users under to this group inherits the privileges assigned to that group.
@@ -1108,7 +1138,7 @@ type Mutation {
         """
         privileges: [Privilages]
     ): Boolean!
-        @rest(path: "/v2/group/addprivilege", method: "PUT", tag: "Group")
+        @rest(path: "/v2/group/addprivilege", method: "PUT", category: "Group")
     """
     To programmatically remove privileges from a group, use API endpoint. The API removes only the privilege association. It does not delete the privilege or group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
     """
@@ -1126,7 +1156,11 @@ type Mutation {
         """
         privileges: [Privilages]
     ): Boolean!
-        @rest(path: "/v2/group/removeprivilege", method: "PUT", tag: "Group")
+        @rest(
+            path: "/v2/group/removeprivilege"
+            method: "PUT"
+            category: "Group"
+        )
     """
     To programmatically add existing ThoughtSpot users to a group, use this API endpoint. When you assign users to a group, the users inherits the privileges assigned to that group. At least one of id or name of the group is required. When both are given user id will be considered.
     """
@@ -1143,7 +1177,8 @@ type Mutation {
         Array of user name that you want to update in user group.
         """
         users: [UserNameAndIDInput]!
-    ): Boolean @rest(path: "/v2/group/adduser", method: "PUT", tag: "Group")
+    ): Boolean
+        @rest(path: "/v2/group/adduser", method: "PUT", category: "Group")
     """
     To programmatically remove users from a group, use API endpoint.The API removes only the user association. It does not delete the users or group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
     """
@@ -1160,7 +1195,8 @@ type Mutation {
         Array of user name that you want to delete from user group.
         """
         users: [UserNameAndIDInput]!
-    ): Boolean! @rest(path: "/v2/group/removeuser", method: "PUT", tag: "Group")
+    ): Boolean!
+        @rest(path: "/v2/group/removeuser", method: "PUT", category: "Group")
     """
     To programmatically add existing groups to a group, use API endpoint. When you assign groups to a group, the group inherits the privileges assigned to those groups. At least one of id or name of group is required. When both are given user id will be considered.
     """
@@ -1177,7 +1213,8 @@ type Mutation {
         Array of objects of groups that the user belong to.
         """
         groups: [GroupNameAndIDInput]!
-    ): Boolean @rest(path: "/v2/group/addgroup", method: "PUT", tag: "Group")
+    ): Boolean
+        @rest(path: "/v2/group/addgroup", method: "PUT", category: "Group")
     """
     To programmatically remove groups from a group, use API endpoint.The API removes only the group association. It does not delete the group from the Thoughtspot system. At least one of id or name of group is required. When both are given user id will be considered.
     """
@@ -1195,7 +1232,7 @@ type Mutation {
         """
         groups: [GroupNameAndIDInput]!
     ): Boolean!
-        @rest(path: "/v2/group/removegroup", method: "PUT", tag: "Group")
+        @rest(path: "/v2/group/removegroup", method: "PUT", category: "Group")
     """
     To get the details of a specific group account or all groups in the ThoughtSpot system, use this end point.
     """
@@ -1240,7 +1277,7 @@ type Mutation {
         Type of user group. LOCAL_GROUP indicates that the user is created locally in the ThoughtSpot system.
         """
         type: String
-    ): JSON @rest(path: "/v2/group/search", method: "POST", tag: "Group")
+    ): JSON @rest(path: "/v2/group/search", method: "POST", category: "Group")
     """
     To programmatically create tags, use this endpoint
     """
@@ -1254,7 +1291,11 @@ type Mutation {
         """
         color: String
     ): MetadataTagResponse!
-        @rest(path: "/v2/metadata/tag/create", method: "POST", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tag/create"
+            method: "POST"
+            category: "Metadata"
+        )
     """
     To programmatically update tags, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
     """
@@ -1272,7 +1313,11 @@ type Mutation {
         """
         color: String
     ): Boolean!
-        @rest(path: "/v2/metadata/tag/update", method: "PUT", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tag/update"
+            method: "PUT"
+            category: "Metadata"
+        )
     """
     To programmatically delete tags, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
     """
@@ -1289,7 +1334,7 @@ type Mutation {
         @rest(
             path: "/v2/metadata/tag/delete"
             method: "DELETE"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To programmatically assign tags to a metadata object, such as a liveboard, search answer, table, worksheet, or view, use this endpoint.  At least one of id or name of tag is required. When both are given, then id will be considered.
@@ -1308,7 +1353,11 @@ type Mutation {
         """
         tsObject: [TsObjectInput]!
     ): Boolean!
-        @rest(path: "/v2/metadata/tag/assign", method: "PUT", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tag/assign"
+            method: "PUT"
+            category: "Metadata"
+        )
     """
     To programmatically unassign tags to a metadata object, such as a liveboard, search answer, table, worksheet, or view, use this endpoint. At least one of id or name of tag is required. When both are given, then id will be considered.
     """
@@ -1326,7 +1375,11 @@ type Mutation {
         """
         tsObject: [TsObjectInput]!
     ): Boolean!
-        @rest(path: "/v2/metadata/tag/unassign", method: "PUT", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tag/unassign"
+            method: "PUT"
+            category: "Metadata"
+        )
     """
     To programmatically assign objects to favorites for a given user account, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
     """
@@ -1347,7 +1400,7 @@ type Mutation {
         @rest(
             path: "/v2/metadata/favorite/assign"
             method: "PUT"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To programmatically unassign objects to favorites for a given user account, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
@@ -1369,7 +1422,7 @@ type Mutation {
         @rest(
             path: "/v2/metadata/favorite/unassign"
             method: "PUT"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To assign a specific liveboard as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
@@ -1391,7 +1444,7 @@ type Mutation {
         @rest(
             path: "/v2/metadata/homeliveboard/assign"
             method: "PUT"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To unassign the home liveboard set for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
@@ -1409,7 +1462,7 @@ type Mutation {
         @rest(
             path: "/v2/metadata/homeliveboard/unassign"
             method: "PUT"
-            tag: "Metadata"
+            category: "Metadata"
         )
     """
     To export ThoughtSpot objects represented in ThoughtSpot Modeling Language (TML), use this endpoint
@@ -1428,7 +1481,11 @@ type Mutation {
         """
         exportAssociated: Boolean = false
     ): JSON
-        @rest(path: "/v2/metadata/tml/export", method: "POST", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tml/export"
+            method: "POST"
+            category: "Metadata"
+        )
     """
     To import ThoughtSpot objects represented in ThoughtSpot Modeling Language (TML), use this endpoint
     """
@@ -1458,7 +1515,11 @@ type Mutation {
         """
         forceCreate: Boolean = false
     ): JSON
-        @rest(path: "/v2/metadata/tml/import", method: "POST", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/tml/import"
+            method: "POST"
+            category: "Metadata"
+        )
     """
     Use this endpoint to delete the metadata objects
     """
@@ -1472,7 +1533,11 @@ type Mutation {
         """
         id: [String]!
     ): Boolean!
-        @rest(path: "/v2/metadata/delete", method: "DELETE", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/delete"
+            method: "DELETE"
+            category: "Metadata"
+        )
     """
     To create a table in Falcon, use this endpoint.
     """
@@ -1489,7 +1554,7 @@ type Mutation {
         @rest(
             path: "/v2/database/table/create"
             method: "POST"
-            tag: "Database"
+            category: "Database"
         )
     """
     To run a TQL statement in Falcon, use this endpoint. You can run only following type of statements - Table DDL alter and Table rows update and delete.
@@ -1503,7 +1568,7 @@ type Mutation {
         @rest(
             path: "/v2/database/table/runquery"
             method: "POST"
-            tag: "Database"
+            category: "Database"
         )
     """
     To query the details of dependent objects and associate objects as dependents, you can use this API. Dependency is defined as relation between referenced and referencing objects. A referencing object is said to have a dependency on a referenced object, if the referenced object cannot be deleted without first deleting the referencing object. For example, consider a worksheet 'W1' that has a derived logical column 'C1' that has a reference to a base logical column 'C2'. This can be shown diagramatically as: W1-->C1-->C2. W1 has a dependency on C2 i.e. W1 is a referencing object and C2 is a referenced object. It is not possible to delete C2 without first deleting W1 because deletion of C2 will be prevented by the relationship between W1's column C1 and C2. Similarly C1 is said to have a dependency on C2 i.e. C1 is a referencing object and C2 is a referenced object. It is not possible to delete C2 without first deleting C1
@@ -1522,7 +1587,11 @@ type Mutation {
         """
         batchSize: Int = -1
     ): JSON
-        @rest(path: "/v2/metadata/dependency", method: "POST", tag: "Metadata")
+        @rest(
+            path: "/v2/metadata/dependency"
+            method: "POST"
+            category: "Metadata"
+        )
     """
     To programmatically create a connection in the ThoughtSpot system use this API endpoint.
     Using this API, you can create a connection and assign groups.
@@ -1547,7 +1616,11 @@ type Mutation {
         """
         configuration: String!
     ): CreateConnectionResponse!
-        @rest(path: "/v2/connection/create", method: "POST", tag: "Connection")
+        @rest(
+            path: "/v2/connection/create"
+            method: "POST"
+            category: "Connection"
+        )
     """
     You can use this endpoint to programmatically modify an existing connection
     To modify a connection, you require admin connection privileges.
@@ -1571,7 +1644,11 @@ type Mutation {
         """
         configuration: String!
     ): Boolean!
-        @rest(path: "/v2/connection/update", method: "PUT", tag: "Connection")
+        @rest(
+            path: "/v2/connection/update"
+            method: "PUT"
+            category: "Connection"
+        )
     """
     To remove a connection from the ThoughtSpot system, use this endpoint.
     """
@@ -1584,7 +1661,7 @@ type Mutation {
         @rest(
             path: "/v2/connection/delete"
             method: "DELETE"
-            tag: "Connection"
+            category: "Connection"
         )
     """
     To programmatically add table to an existing connection use this endpoint.
@@ -1601,7 +1678,11 @@ type Mutation {
         """
         table: [AddTableInput]!
     ): Boolean
-        @rest(path: "/v2/connection/addtable", method: "PUT", tag: "Connection")
+        @rest(
+            path: "/v2/connection/addtable"
+            method: "PUT"
+            category: "Connection"
+        )
     """
     To programmatically remove a table from a connection use API endpoint.
     The API removes only the connection association. It does not delete the connection or group from the Thoughtspot system.
@@ -1620,7 +1701,7 @@ type Mutation {
         @rest(
             path: "/v2/connection/removetable"
             method: "PUT"
-            tag: "Connection"
+            category: "Connection"
         )
     """
     To get the details of a specific connection or all connections in the ThoughtSpot system use this end point.
@@ -1667,7 +1748,11 @@ type Mutation {
         """
         tag: [TagNameAndIdInput]
     ): [ConnectionResponse]
-        @rest(path: "/v2/connection/search", method: "POST", tag: "Connection")
+        @rest(
+            path: "/v2/connection/search"
+            method: "POST"
+            category: "Connection"
+        )
     """
     To get the details of tables from a connection, use this endpoint.
 
@@ -1697,7 +1782,11 @@ type Mutation {
         """
         includeColumn: Boolean = true
     ): ConnectionTableResponse
-        @rest(path: "/v2/connection/table", method: "POST", tag: "Connection")
+        @rest(
+            path: "/v2/connection/table"
+            method: "POST"
+            category: "Connection"
+        )
     """
     To get the details of columns in a table associated to a connection, use this endpoint.
 
@@ -1730,7 +1819,7 @@ type Mutation {
         @rest(
             path: "/v2/connection/tablecoloumn"
             method: "POST"
-            tag: "Connection"
+            category: "Connection"
         )
     """
     To update the Thoughtspot cluster configuration, use this endpoint.
@@ -1746,7 +1835,7 @@ type Mutation {
         @rest(
             path: "/v2/admin/configuration/update"
             method: "PUT"
-            tag: "admin"
+            category: "admin"
         )
     """
     To reset the password of a ThoughtSpot user account, use this endpoint.
@@ -1769,7 +1858,7 @@ type Mutation {
         """
         newPassword: String!
     ): Boolean!
-        @rest(path: "/v2/admin/resetpassword", method: "PUT", tag: "admin")
+        @rest(path: "/v2/admin/resetpassword", method: "PUT", category: "admin")
     """
     To programmatically synchronize user accounts and user groups from external system with ThoughtSpot, use this endpoint.
 
@@ -1848,7 +1937,7 @@ type Mutation {
         """
         newUserPassword: String
     ): AdminsyncPrincipalResponse!
-        @rest(path: "/v2/admin/syncprincipal", method: "PUT", tag: "admin")
+        @rest(path: "/v2/admin/syncprincipal", method: "PUT", category: "admin")
     """
     To programmatically change the owner of one or several objects from one user account to another, use this endpoint.
 
@@ -1876,7 +1965,7 @@ type Mutation {
         """
         toUser: ToUserNameAndIDInput!
     ): Boolean!
-        @rest(path: "/v2/admin/changeauthor", method: "PUT", tag: "admin")
+        @rest(path: "/v2/admin/changeauthor", method: "PUT", category: "admin")
     """
     To programmatically assign an author to one or several objects, use this endpoint.
 
@@ -1898,7 +1987,7 @@ type Mutation {
         """
         id: String
     ): Boolean!
-        @rest(path: "/v2/admin/assignauthor", method: "PUT", tag: "admin")
+        @rest(path: "/v2/admin/assignauthor", method: "PUT", category: "admin")
     """
     To logout one or more users from logged in session, use this endpoint. If no input is provided then all logged in users are force logged out.
 
@@ -1910,7 +1999,7 @@ type Mutation {
         """
         user: [NameAndIdInput]
     ): Boolean
-        @rest(path: "/v2/admin/forcelogout", method: "POST", tag: "admin")
+        @rest(path: "/v2/admin/forcelogout", method: "POST", category: "admin")
     """
     To programmatically download Answer data as a file, use this endpoint.
 
@@ -1925,7 +2014,7 @@ type Mutation {
         Type of file to be generated.
         """
         type: ReportFormat!
-    ): JSON @rest(path: "/v2/report/answer", method: "GET", tag: "report")
+    ): JSON @rest(path: "/v2/report/answer", method: "GET", category: "report")
     """
     To programmatically download Liveboard data or specific Visualization data from Liveboard as a file, use this endpoint
     """
@@ -1968,7 +2057,8 @@ type Mutation {
         Additional options that are applicable for PDF type.
         """
         pdfOptions: pdfOptionsInput
-    ): JSON @rest(path: "/v2/report/liveboard", method: "GET", tag: "report")
+    ): JSON
+        @rest(path: "/v2/report/liveboard", method: "GET", category: "report")
     """
     Use this endpoint to refresh data in the materialized view by running the query associated with it
     """
@@ -1981,7 +2071,7 @@ type Mutation {
         @rest(
             path: "/v2/materialization/refreshview"
             method: "PUT"
-            tag: "materialization"
+            category: "materialization"
         )
     """
     To programmatically create custom actions on ThoughtSpot clusters that support embedding configuration, use this endpoint
@@ -1999,7 +2089,7 @@ type Mutation {
         @rest(
             path: "/v2/customaction/create"
             method: "POST"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To programmatically edit an existing custom action, use this endpoint
@@ -2021,7 +2111,7 @@ type Mutation {
         @rest(
             path: "/v2/customaction/update"
             method: "PUT"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To programmatically delete a custom action, use this endpoint
@@ -2035,7 +2125,7 @@ type Mutation {
         @rest(
             path: "/v2/customaction/delete"
             method: "DELETE"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To programmatically associate a custom action to a ThoughtSpot object, use this endpoint
@@ -2057,7 +2147,7 @@ type Mutation {
         @rest(
             path: "/v2/customaction/association/update"
             method: "PUT"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To remove custom action associations to ThoughtSpot objects, use this endpoint
@@ -2079,7 +2169,7 @@ type Mutation {
         @rest(
             path: "/v2/customactions/association/delete"
             method: "DELETE"
-            tag: "CustomActions"
+            category: "CustomActions"
         )
     """
     To programmatically share ThoughtSpot objects with another user or user group, use this endpoint.
@@ -2125,7 +2215,7 @@ type Mutation {
         @rest(
             path: "/v2/security/share/tsobject"
             method: "POST"
-            tag: "Security"
+            category: "Security"
         )
     """
     If you want to share a specific visualization from a Liveboard with another user or user group, then use this endpoint.
@@ -2165,7 +2255,7 @@ type Mutation {
         @rest(
             path: "/v2/security/share/visualization"
             method: "POST"
-            tag: "Security"
+            category: "Security"
         )
     """
     To list the permissions for user and user groups on a list of objects, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
@@ -2195,7 +2285,7 @@ type Mutation {
         @rest(
             path: "/v2/security/permission/tsobject/search"
             method: "POST"
-            tag: "Security"
+            category: "Security"
         )
     """
     To list the permissions for user and user groups on a list of objects, use this endpoint. The response will include only those users and groups with have either VIEW OR MODIFY permission.
@@ -2221,7 +2311,7 @@ type Mutation {
         @rest(
             path: "/v2/security/permission/principal/search"
             method: "POST"
-            tag: "Security"
+            category: "Security"
         )
     """
     To programmatically create an organization in the ThoughtSpot system, use this API endpoint.
@@ -2237,7 +2327,8 @@ type Mutation {
         Description text for the organization.
         """
         description: String
-    ): OrgsResponse @rest(path: "/v2/org/create", method: "POST", tag: "Org")
+    ): OrgsResponse
+        @rest(path: "/v2/org/create", method: "POST", category: "Org")
     """
     You can use this endpoint to programmatically modify an existing org.
 
@@ -2262,7 +2353,8 @@ type Mutation {
         Status of the organization.
         """
         active: Boolean
-    ): OrgsResponse @rest(path: "/v2/org/update", method: "PUT", tag: "Org")
+    ): OrgsResponse
+        @rest(path: "/v2/org/update", method: "PUT", category: "Org")
     """
     To remove an organization from the ThoughtSpot system, send a DELETE request to this endpoint.
 
@@ -2279,7 +2371,7 @@ type Mutation {
         The ID of the organization.
         """
         id: Int
-    ): Boolean! @rest(path: "/v2/org/delete", method: "DELETE", tag: "Org")
+    ): Boolean! @rest(path: "/v2/org/delete", method: "DELETE", category: "Org")
     """
     To get the details of a specific organization or all organizations in the ThoughtSpot system use this end point.
 
@@ -2300,7 +2392,8 @@ type Mutation {
         When set to true, the response will include the details of deleted organization also.
         """
         showDeleted: Boolean = false
-    ): [OrgsResponse] @rest(path: "/v2/org/search", method: "POST", tag: "Org")
+    ): [OrgsResponse]
+        @rest(path: "/v2/org/search", method: "POST", category: "Org")
 }
 
 enum AuthTokenType {
