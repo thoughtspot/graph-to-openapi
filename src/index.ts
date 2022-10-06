@@ -11,6 +11,20 @@ import { applyDirectiveTransforms, SpecInfo } from './directives';
 import { buildSchemaObjectFromType } from './types';
 import { buildPathFromOperation } from './operations';
 
+export const directiveTypeDefs = `directive @rest(
+    "Path for the method"
+    path: String = "/v2/"
+  
+    "REST Method to use GET|POST|PUT"
+    method: String = "GET"
+  
+    "Hide the method from the generated swagger spec"
+    hidden: Boolean = false
+  
+    "The category for this API"
+    category: String = ""
+  ) on FIELD_DEFINITION`;
+
 export function getOpenAPISpec({
     schema,
     info,
