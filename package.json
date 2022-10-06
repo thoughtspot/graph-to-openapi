@@ -1,12 +1,13 @@
 {
     "name": "@thoughtspot/graph-to-openapi",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "Get an OpenAPI 3.0 spec out of a graphql Schema",
     "main": "dist/index.js",
     "scripts": {
         "check": "eslint 'src/**'",
         "test": "npm run check; jest",
         "build": "tsc -p .",
+        "prepublishOnly": "npm run build; npm test",
         "posttest": "cat ./coverage/lcov.info | coveralls"
     },
     "repository": {
