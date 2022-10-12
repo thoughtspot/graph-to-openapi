@@ -120,7 +120,7 @@ function addPathsToSpec(
                 specInfo,
                 schema,
                 useRequestBody,
-                errorResponseRef: '$/components/schemas/ErrorResponse',
+                errorResponseRef: '#/components/schemas/ErrorResponse',
             }),
         };
     });

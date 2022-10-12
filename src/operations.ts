@@ -27,6 +27,7 @@ export function buildPathFromOperation({
                               schema: resolveRequestBody(operation.args),
                           },
                       },
+                      required: true,
                   },
               }
             : {

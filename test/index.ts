@@ -6,7 +6,7 @@ import { getOpenAPISpec } from '../src/index';
 
 describe('should generate the correct api spec', () => {
     it('with the full schema file', () => {
-        let schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
+        const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
             loaders: [new GraphQLFileLoader()],
         });
 
@@ -90,7 +90,7 @@ describe('should generate the correct api spec', () => {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '$/components/schemas/ErrorResponse',
+                                $ref: '#/components/schemas/ErrorResponse',
                             },
                         },
                     },
