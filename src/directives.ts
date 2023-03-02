@@ -48,6 +48,10 @@ function versionDirectiveTransformer(
     });
 }
 
+const textFormatter = (text: string) => {
+    return `<span class="since-beta-tag">${text}</span>`;
+};
+
 const objectTransformer =
     (directiveName: string, schema: GraphQLSchema) => (fieldConfig: any) => {
         const apiDirective = getDirective(
@@ -56,11 +60,15 @@ const objectTransformer =
             directiveName,
         )?.[0];
         if (apiDirective) {
-            const versionText = `*since: ${apiDirective.since.join(' | ')}*`;
+            const versionText = textFormatter(
+                `*since: ${apiDirective.since.join(' | ')}`,
+            );
+            const betaText = apiDirective.beta ? textFormatter('Beta') : '';
             fieldConfig.version = apiDirective.since;
+            fieldConfig.beta = apiDirective.beta;
             fieldConfig.description = fieldConfig.description
-                ? `${fieldConfig.description} <br/> <font color="red">${versionText}</font>`
-                : `${versionText}`;
+                ? `${fieldConfig.description} ${betaText} ${versionText}`
+                : `${betaText} ${versionText}`;
         }
         return fieldConfig;
     };

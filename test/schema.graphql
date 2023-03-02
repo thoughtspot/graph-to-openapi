@@ -7,6 +7,7 @@ directive @rest(
 
 directive @version(
     since: [String] = ["No longer supported"]
+    beta: Booolean = false
 ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE | ENUM | OBJECT
 
 scalar JSON
