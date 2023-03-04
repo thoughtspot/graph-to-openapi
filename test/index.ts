@@ -9,9 +9,6 @@ describe('should generate the correct api spec', () => {
         const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
             loaders: [new GraphQLFileLoader()],
         });
-
-        // console.log(schema);
-        // console.log(printSchema(schema));
         const { spec } = getOpenAPISpec({
             schema,
             info: {},

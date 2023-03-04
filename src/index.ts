@@ -4,10 +4,13 @@ import {
     isInputObjectType,
     isIntrospectionType,
     GraphQLObjectType,
-    GraphQLNamedType,
 } from 'graphql';
 import { join } from 'path';
-import { applyDirectiveTransforms, SpecInfo } from './directives';
+import {
+    applyVersionTransforms,
+    applyDirectiveTransforms,
+    SpecInfo,
+} from './directives';
 import { buildSchemaObjectFromType } from './types';
 import { buildPathFromOperation } from './operations';
 
@@ -35,6 +38,7 @@ export function getOpenAPISpec({
     basePath: string;
 }) {
     schema = applyDirectiveTransforms(schema);
+    schema = applyVersionTransforms(schema);
     const spec: any = {
         openapi: '3.0.0',
         info,

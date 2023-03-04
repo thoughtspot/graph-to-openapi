@@ -13,20 +13,8 @@ function specDirectiveTransformer(
     schema: GraphQLSchema,
     directiveName: string,
 ) {
-    // Add the Directive to schema
-    // schema = mergeSchemas({
-    //   schemas: [schema],
-    //   typeDefs: /* Graphql */ `
-    //     directive @rest(
-    //       path: String = "/v2/"
-    //       method: String = "GET"
-    //       hidden: Boolean = false
-    //     ) on FIELD_DEFINITION
-    //   `,
-    // });
     return mapSchema(schema, {
         // Executes once for each object field definition in the schema
-
         [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
             const specDirective = getDirective(
                 schema,
@@ -46,6 +34,49 @@ function specDirectiveTransformer(
     });
 }
 
+function versionDirectiveTransformer(
+    schema: GraphQLSchema,
+    directiveName: string,
+) {
+    const fieldMapper = objectTransformer(directiveName, schema);
+    return mapSchema(schema, {
+        [MapperKind.OBJECT_FIELD]: fieldMapper,
+        [MapperKind.ARGUMENT]: fieldMapper,
+        [MapperKind.ENUM_VALUE]: fieldMapper,
+        [MapperKind.ENUM_TYPE]: fieldMapper,
+        [MapperKind.FIELD]: fieldMapper,
+    });
+}
+
+const textFormatter = (text: string) => {
+    return `<span class="since-beta-tag">${text}</span>`;
+};
+
+const objectTransformer =
+    (directiveName: string, schema: GraphQLSchema) => (fieldConfig: any) => {
+        const apiDirective = getDirective(
+            schema,
+            fieldConfig,
+            directiveName,
+        )?.[0];
+        if (apiDirective) {
+            const versionText = textFormatter(
+                `*since: ${apiDirective.since.join(' | ')}`,
+            );
+            const betaText = apiDirective.beta ? textFormatter('Beta') : '';
+            fieldConfig.version = apiDirective.since;
+            fieldConfig.beta = apiDirective.beta;
+            fieldConfig.description = fieldConfig.description
+                ? `${fieldConfig.description} ${betaText} ${versionText}`
+                : `${betaText} ${versionText}`;
+        }
+        return fieldConfig;
+    };
+
 export function applyDirectiveTransforms(schema: GraphQLSchema): GraphQLSchema {
     return specDirectiveTransformer(schema, 'rest');
+}
+
+export function applyVersionTransforms(schema: GraphQLSchema): GraphQLSchema {
+    return versionDirectiveTransformer(schema, 'version');
 }
