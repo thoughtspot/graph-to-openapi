@@ -55,6 +55,13 @@ export function buildPathFromOperation({
     };
 }
 
+function isNullableType(arg: any) {
+    const isBooleanType = arg.type.name === 'Boolean';
+    const notRequired = !isNonNullType(arg.type);
+
+    return notRequired && isBooleanType;
+}
+
 function resolveRequestBody(args: any[]) {
     if (!args) {
         return {};
@@ -73,6 +80,7 @@ function resolveRequestBody(args: any[]) {
             default: arg.defaultValue,
             ...resolveFieldType(arg.type),
             deprecated: !!arg.deprecationReason,
+            nullable: isNullableType(arg),
         };
     });
     return {

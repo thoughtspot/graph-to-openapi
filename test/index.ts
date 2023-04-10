@@ -33,6 +33,7 @@ describe('should generate the correct api spec', () => {
                                     type: 'integer',
                                     format: 'int32',
                                     deprecated: false,
+                                    nullable: false,
                                 },
                                 batchNumber: {
                                     description:
@@ -41,6 +42,7 @@ describe('should generate the correct api spec', () => {
                                     type: 'integer',
                                     format: 'int32',
                                     deprecated: false,
+                                    nullable: false,
                                 },
                                 batchSize: {
                                     description:
@@ -49,18 +51,21 @@ describe('should generate the correct api spec', () => {
                                     type: 'integer',
                                     format: 'int32',
                                     deprecated: false,
+                                    nullable: false,
                                 },
                                 queryString: {
                                     description:
                                         "The data search query string. Example: [revenue] > 1000 [ship mode] = 'air'",
                                     type: 'string',
                                     deprecated: false,
+                                    nullable: false,
                                 },
                                 dataObjectId: {
                                     description:
                                         'The GUID of the data object, either a worksheet, a view, or a table.',
                                     type: 'string',
                                     deprecated: false,
+                                    nullable: false,
                                 },
                                 formatType: {
                                     description:
@@ -69,6 +74,14 @@ describe('should generate the correct api spec', () => {
                                     type: 'string',
                                     enum: ['COMPACT', 'FULL'],
                                     deprecated: false,
+                                    nullable: false,
+                                },
+                                boolType: {
+                                    description: 'bool type',
+                                    default: undefined,
+                                    type: 'boolean',
+                                    deprecated: false,
+                                    nullable: true,
                                 },
                             },
                             required: ['queryString', 'dataObjectId'],
