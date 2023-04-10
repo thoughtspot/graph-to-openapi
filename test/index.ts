@@ -77,7 +77,8 @@ describe('should generate the correct api spec', () => {
                                     nullable: false,
                                 },
                                 boolType: {
-                                    description: 'bool type',
+                                    description:
+                                        'This is an optional boolean type and is nullable',
                                     default: undefined,
                                     type: 'boolean',
                                     deprecated: false,
