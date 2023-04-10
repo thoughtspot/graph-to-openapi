@@ -80,7 +80,7 @@ function resolveRequestBody(args: any[]) {
             default: arg.defaultValue,
             ...resolveFieldType(arg.type),
             deprecated: !!arg.deprecationReason,
-            nullable: isNullableType(arg),
+            ...(isNullableType(arg) && { nullable: true }),
         };
     });
     return {

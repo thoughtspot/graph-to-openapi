@@ -383,7 +383,7 @@ type Query {
         """ 
         This is an optional boolean type and is nullable
         """
-        boolType: Boolean
+        nullableBoolType: Boolean
     ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
