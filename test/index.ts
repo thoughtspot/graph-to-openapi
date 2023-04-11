@@ -70,6 +70,14 @@ describe('should generate the correct api spec', () => {
                                     enum: ['COMPACT', 'FULL'],
                                     deprecated: false,
                                 },
+                                nullableBoolType: {
+                                    description:
+                                        'This is an optional boolean type and is nullable',
+                                    default: undefined,
+                                    type: 'boolean',
+                                    deprecated: false,
+                                    nullable: true,
+                                },
                             },
                             required: ['queryString', 'dataObjectId'],
                         },
