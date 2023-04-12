@@ -6,9 +6,16 @@ directive @rest(
 ) on FIELD_DEFINITION
 
 directive @version(
-    since: [String] = ["No longer supported"]
+    minVersion: String = "No longer supported"
     beta: Boolean = false
 ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE | ENUM | OBJECT
+
+directive @example(
+    response_200: JSON = {}
+    response_201: JSON = {}
+    response_400: JSON = {}
+    response_500: JSON = {}
+) on FIELD_DEFINITION
 
 scalar JSON
 
@@ -35,8 +42,13 @@ type Query {
         """
         The GUID of the user account to query
         """
-        id: String @version(since: ["1", "2"])
+        id: String
     ): UserResponse @rest(path: "/v2/user", method: "GET", category: "User")
+                    @version(minVersion: "1")
+                    @example(response_200: {
+                        id: "id0",
+                        name: "name0"
+                    })
     """
     To get the details of a specific group by name or id, use this endpoint.
     At Least one value needed.  When both are given id will be considered to fetch user information.
@@ -380,7 +392,8 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
+    ): JSON 
+        @rest(path: "/v2/data/search", method: "POST", category: "Data")
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
     """
@@ -1407,6 +1420,7 @@ type Mutation {
             method: "PUT"
             category: "Metadata"
         )
+        @version(minVersion: "9.0.0.cl")
     """
     To programmatically unassign objects to favorites for a given user account, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
     """
@@ -1429,6 +1443,7 @@ type Mutation {
             method: "PUT"
             category: "Metadata"
         )
+        @version(minVersion: "9.0.0.cl")
     """
     To assign a specific liveboard as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
     """
@@ -3832,4 +3847,9 @@ type ConnectionColumn {
     List of columns in the table
     """
     column: [TableColumns]
+}
+
+enum RestAPIVersionNumber {
+    Version900
+    Version910
 }

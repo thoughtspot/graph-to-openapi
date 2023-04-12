@@ -1,6 +1,5 @@
 import { GraphQLSchema } from 'graphql';
 import { mapSchema, getDirective, MapperKind } from '@graphql-tools/utils';
-import { mergeSchemas } from '@graphql-tools/schema';
 
 export interface SpecInfo {
     path: string;
@@ -60,14 +59,14 @@ const objectTransformer =
             directiveName,
         )?.[0];
         if (apiDirective) {
-            const versionText = textFormatter(
-                `*since: ${apiDirective.since.join(' | ')}`,
-            );
+            const versionText = apiDirective.minVersion
+                ? textFormatter(`Version: ${apiDirective.minVersion} or later`)
+                : '';
             const betaText = apiDirective.beta ? textFormatter('Beta') : '';
-            fieldConfig.version = apiDirective.since;
+            fieldConfig.version = apiDirective.minVersion;
             fieldConfig.beta = apiDirective.beta;
             fieldConfig.description = fieldConfig.description
-                ? `${fieldConfig.description} ${betaText} ${versionText}`
+                ? `${fieldConfig.description} <br/> ${betaText} ${versionText}`
                 : `${betaText} ${versionText}`;
         }
         return fieldConfig;
