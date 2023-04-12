@@ -42,7 +42,7 @@ type Query {
         """
         The GUID of the user account to query
         """
-        id: String
+        id: String @version(minVersion: "1")
     ): UserResponse @rest(path: "/v2/user", method: "GET", category: "User")
                     @version(minVersion: "1")
                     @example(response_200: {
@@ -392,8 +392,11 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON 
-        @rest(path: "/v2/data/search", method: "POST", category: "Data")
+        """ 
+        This is an optional boolean type and is nullable
+        """
+        nullableBoolType: Boolean
+    ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
     """
@@ -1443,6 +1446,7 @@ type Mutation {
             method: "PUT"
             category: "Metadata"
         )
+        @version(minVersion: "9.0.0.cl")
         @version(minVersion: "9.0.0.cl")
     """
     To assign a specific liveboard as a home liveboard for a user, use this endpoint. At least one of user id or username is required. When both are given, then id will be considered.
@@ -3847,9 +3851,4 @@ type ConnectionColumn {
     List of columns in the table
     """
     column: [TableColumns]
-}
-
-enum RestAPIVersionNumber {
-    Version900
-    Version910
 }
