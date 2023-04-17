@@ -6,6 +6,7 @@ import {
     GraphQLObjectType,
 } from 'graphql';
 import { join } from 'path';
+import { getDirective } from '@graphql-tools/utils';
 import {
     applyVersionTransforms,
     applyDirectiveTransforms,
@@ -42,6 +43,7 @@ export function getOpenAPISpec({
     const spec: any = {
         openapi: '3.0.0',
         info,
+        'x-roles': [],
         tags: [],
         paths: {},
         components: {
@@ -105,6 +107,7 @@ function addPathsToSpec(
     schema: GraphQLSchema,
     type: string,
 ) {
+    const versionMap: Map<string, string> = new Map<string, string>();
     Object.keys(operations).forEach((operationName: string) => {
         const operation = operations[operationName];
         const specInfo: SpecInfo = operation.extensions.specInfo as SpecInfo;
@@ -127,5 +130,35 @@ function addPathsToSpec(
                 errorResponseRef: '#/components/schemas/ErrorResponse',
             }),
         };
+        const apiDirective: any = getDirective(
+            schema,
+            operation,
+            'version',
+        )?.[0];
+        if (apiDirective && apiDirective.minVersion) {
+            versionMap.set(apiDirective.minVersion, apiDirective.minVersion);
+        }
     });
+    // eslint-disable-next-line no-param-reassign
+    spec['x-roles'] = filterAvailableVersion(versionMap);
+}
+
+/**
+ * Filter out all the current versions available on the api which needs to be shown
+ * based on the version tagged
+ */
+function filterAvailableVersion(versionMap: Map<string, string>) {
+    // eslint-disable-next-line no-restricted-syntax
+    const xRoles = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of versionMap.entries()) {
+        const role = {
+            name: key,
+            id: key,
+            tags: [value],
+            description: `Roles for version ${key}`,
+        };
+        xRoles.push(role);
+    }
+    return xRoles;
 }

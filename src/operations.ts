@@ -1,3 +1,4 @@
+import { getDirective } from '@graphql-tools/utils';
 import { GraphQLObjectType, GraphQLSchema, isNonNullType } from 'graphql';
 import { SpecInfo } from './directives';
 import { resolveFieldType } from './types';
@@ -15,10 +16,24 @@ export function buildPathFromOperation({
     useRequestBody: boolean;
     errorResponseRef: string;
 }) {
+    const apiDirective: any = getDirective(schema, operation, 'version')?.[0];
+    const exampleDirective: any = getDirective(
+        schema,
+        operation,
+        'example',
+    )?.[0];
+    const requiredBody = resolveRequestBody(operation.args) as any;
+    const isRequired =
+        requiredBody &&
+        requiredBody.required &&
+        requiredBody.required.length > 1;
     return {
         operationId: operation.name,
         description: operation.description,
-        tags: [specInfo.category],
+        tags:
+            apiDirective && apiDirective.minVersion
+                ? [specInfo.category, apiDirective.minVersion]
+                : [specInfo.category],
         ...(useRequestBody
             ? {
                   requestBody: {
@@ -27,7 +42,7 @@ export function buildPathFromOperation({
                               schema: resolveRequestBody(operation.args),
                           },
                       },
-                      required: true,
+                      ...(isRequired && { required: true }),
                   },
               }
             : {
@@ -35,9 +50,40 @@ export function buildPathFromOperation({
               }),
         responses: {
             200: {
+                description: 'Common successful response',
                 content: {
                     'application/json': {
                         schema: resolveFieldType(operation.type),
+                        ...(exampleDirective &&
+                            exampleDirective.response_200 && {
+                                example: exampleDirective.response_200,
+                            }),
+                    },
+                },
+            },
+            201: {
+                description: 'Common error response',
+                content: {
+                    'application/json': {
+                        schema: resolveFieldType(operation.type),
+                        ...(exampleDirective &&
+                            exampleDirective.response_201 && {
+                                example: exampleDirective.response_201,
+                            }),
+                    },
+                },
+            },
+            400: {
+                description: 'Operation failed',
+                content: {
+                    'application/json': {
+                        schema: {
+                            $ref: errorResponseRef,
+                        },
+                        ...(exampleDirective &&
+                            exampleDirective.response_400 && {
+                                example: exampleDirective.response_400,
+                            }),
                     },
                 },
             },
@@ -48,6 +94,10 @@ export function buildPathFromOperation({
                         schema: {
                             $ref: errorResponseRef,
                         },
+                        ...(exampleDirective &&
+                            exampleDirective.response_500 && {
+                                example: exampleDirective.response_500,
+                            }),
                     },
                 },
             },
