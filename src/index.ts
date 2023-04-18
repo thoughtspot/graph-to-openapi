@@ -119,7 +119,7 @@ function addPathsToSpec(
         const useRequestBody = ['post', 'patch', 'put'].includes(method);
         routeMap[`${type}.${operationName}`] = {
             method,
-            path: specInfo.path,
+            path: convertOpenApiPathToExpress(specInfo.path),
         };
         spec.paths[path] = {
             [method]: buildPathFromOperation({
@@ -161,4 +161,8 @@ function filterAvailableVersion(versionMap: Map<string, string>) {
         xRoles.push(role);
     }
     return xRoles;
+}
+// sofa requires lines to be
+function convertOpenApiPathToExpress(path: string) {
+    return path.replace(/{/g, ':').replace(/}/g, '');
 }
