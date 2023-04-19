@@ -43,12 +43,10 @@ type Query {
         The GUID of the user account to query
         """
         id: String @version(minVersion: "1")
-    ): UserResponse @rest(path: "/v2/user", method: "GET", category: "User")
-                    @version(minVersion: "1")
-                    @example(response_200: {
-                        id: "id0",
-                        name: "name0"
-                    })
+    ): UserResponse
+        @rest(path: "/v2/user", method: "GET", category: "User")
+        @version(minVersion: "1")
+        @example(response_200: { id: "id0", name: "name0" })
     """
     To get the details of a specific group by name or id, use this endpoint.
     At Least one value needed.  When both are given id will be considered to fetch user information.
@@ -392,11 +390,16 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-        """ 
+        """
         This is an optional boolean type and is nullable
         """
         nullableBoolType: Boolean
-    ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
+    ): JSON
+        @rest(
+            path: "/v2/data/search/{dataObjectId}"
+            method: "POST"
+            category: "Data"
+        )
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
     """
