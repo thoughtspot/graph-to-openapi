@@ -15,7 +15,9 @@ describe('should generate the correct api spec', () => {
             basePath: '/rest/v2',
         });
         expect(Object.keys(spec.paths).length).toBe(92);
-        expect(spec.paths['/rest/v2/v2/data/search'].post).toMatchObject({
+        expect(
+            spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post,
+        ).toMatchObject({
             operationId: 'restapiV2__searchQueryData',
             description:
                 'To programmatically retrieve data from ThoughtSpot using search query string, use this endpoint',
@@ -94,5 +96,19 @@ describe('should generate the correct api spec', () => {
                 },
             },
         });
+    });
+    it('should convert link params from {} to :', () => {
+        const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
+            loaders: [new GraphQLFileLoader()],
+        });
+        const { routeMap } = getOpenAPISpec({
+            schema,
+            info: {},
+            basePath: '/rest/v2',
+        });
+        const map = routeMap as any;
+        expect(map['Query.restapiV2__searchQueryData'].path).toBe(
+            '/v2/data/search/:dataObjectId',
+        );
     });
 });
