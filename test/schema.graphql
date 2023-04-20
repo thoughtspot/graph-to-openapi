@@ -380,7 +380,12 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
-    ): JSON @rest(path: "/v2/data/search", method: "POST", category: "Data")
+    ): JSON
+        @rest(
+            path: "/v2/data/search/{dataObjectId}"
+            method: "POST"
+            category: "Data"
+        )
     """
     To retrieve data related to a Liveboard or visualization from the ThoughtSpot system, you can use this endpoint
     """
