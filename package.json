@@ -1,6 +1,6 @@
 {
     "name": "@thoughtspot/graph-to-openapi",
-    "version": "0.7.6",
+    "version": "0.7.7",
     "description": "Get an OpenAPI 3.0 spec out of a graphql Schema",
     "main": "dist/index.js",
     "scripts": {
