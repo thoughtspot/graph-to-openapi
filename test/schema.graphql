@@ -380,6 +380,10 @@ type Query {
         COMPACT: The response includes only the value of the columns.
         """
         formatType: FormatData = COMPACT
+        """
+        This is an optional boolean type and is nullable
+        """
+        nullableBoolType: Boolean
     ): JSON
         @rest(
             path: "/v2/data/search/{dataObjectId}"
