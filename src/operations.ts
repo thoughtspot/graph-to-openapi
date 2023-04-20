@@ -26,7 +26,7 @@ export function buildPathFromOperation({
     const isRequired =
         requiredBody &&
         requiredBody.required &&
-        requiredBody.required.length > 1;
+        requiredBody.required.length > 0;
     return {
         operationId: operation.name,
         description: operation.description,
