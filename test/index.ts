@@ -58,12 +58,6 @@ describe('should generate the correct api spec', () => {
                                     type: 'string',
                                     deprecated: false,
                                 },
-                                dataObjectId: {
-                                    description:
-                                        'The GUID of the data object, either a worksheet, a view, or a table.',
-                                    type: 'string',
-                                    deprecated: false,
-                                },
                                 formatType: {
                                     description:
                                         'The format of the data in the response.\n\nFULL: The response comes in "column":"value" format.\n\nCOMPACT: The response includes only the value of the columns.',
@@ -104,6 +98,11 @@ describe('should generate the correct api spec', () => {
                 },
             },
         });
+        expect(
+            spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post
+                .requestBody.content['application/json'].schema.properties
+                .dataObjectId,
+        ).toBeUndefined();
     });
     it('should convert link params from {} to :', () => {
         const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {

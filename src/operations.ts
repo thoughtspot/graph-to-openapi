@@ -22,7 +22,10 @@ export function buildPathFromOperation({
         operation,
         'example',
     )?.[0];
-    const requiredBody = resolveRequestBody(operation.args) as any;
+    const requiredBody = resolveRequestBody(
+        operation.args,
+        specInfo.path,
+    ) as any;
     const isRequired =
         requiredBody &&
         requiredBody.required &&
@@ -39,7 +42,10 @@ export function buildPathFromOperation({
                   requestBody: {
                       content: {
                           'application/json': {
-                              schema: resolveRequestBody(operation.args),
+                              schema: resolveRequestBody(
+                                  operation.args,
+                                  specInfo.path,
+                              ),
                           },
                       },
                       ...(isRequired && { required: true }),
@@ -112,7 +118,7 @@ function isNullableType(arg: any) {
     return notRequired && isBooleanType;
 }
 
-function resolveRequestBody(args: any[]) {
+function resolveRequestBody(args: any[], path = '') {
     if (!args) {
         return {};
     }
@@ -124,14 +130,15 @@ function resolveRequestBody(args: any[]) {
         if (isNonNullType(arg.type)) {
             required.push(arg.name);
         }
-
-        properties[arg.name] = {
-            description: arg.description,
-            default: arg.defaultValue,
-            ...resolveFieldType(arg.type),
-            deprecated: !!arg.deprecationReason,
-            ...(isNullableType(arg) && { nullable: true }),
-        };
+        if (!path.includes(`{${arg.name}}`)) {
+            properties[arg.name] = {
+                description: arg.description,
+                default: arg.defaultValue,
+                ...resolveFieldType(arg.type),
+                deprecated: !!arg.deprecationReason,
+                ...(isNullableType(arg) && { nullable: true }),
+            };
+        }
     });
     return {
         type: 'object',
