@@ -30,6 +30,8 @@ export function buildPathFromOperation({
         requiredBody &&
         requiredBody.required &&
         requiredBody.required.length > 0;
+    // we use query params only for get request
+    // both (POST, PUT, PATCH) and GET can have pathParams
     return {
         operationId: operation.name,
         description: operation.description,
@@ -50,9 +52,16 @@ export function buildPathFromOperation({
                       },
                       ...(isRequired && { required: true }),
                   },
+                  parameters: resolvePathParameters(
+                      operation.args,
+                      specInfo.path,
+                  ),
               }
             : {
-                  parameters: resolveParameters(operation.args),
+                  parameters: [
+                      ...resolveQueryParameters(operation.args, specInfo.path),
+                      ...resolvePathParameters(operation.args, specInfo.path),
+                  ],
               }),
         responses: {
             200: {
@@ -111,6 +120,8 @@ export function buildPathFromOperation({
     };
 }
 
+const isPathParam = (arg: any, path: string) => path.includes(`{${arg.name}}`);
+
 function isNullableType(arg: any) {
     const isBooleanType = arg.type.name === 'Boolean';
     const notRequired = !isNonNullType(arg.type);
@@ -126,19 +137,18 @@ function resolveRequestBody(args: any[], path = '') {
     const properties: Record<string, any> = {};
     const required: string[] = [];
 
-    args.forEach((arg) => {
+    args.filter((arg) => !isPathParam(arg, path)).forEach((arg) => {
         if (isNonNullType(arg.type)) {
             required.push(arg.name);
         }
-        if (!path.includes(`{${arg.name}}`)) {
-            properties[arg.name] = {
-                description: arg.description,
-                default: arg.defaultValue,
-                ...resolveFieldType(arg.type),
-                deprecated: !!arg.deprecationReason,
-                ...(isNullableType(arg) && { nullable: true }),
-            };
-        }
+        const hasDefaultValue = arg.defaultValue !== undefined;
+        properties[arg.name] = {
+            description: arg.description,
+            ...(hasDefaultValue && { default: arg.defaultValue }),
+            ...resolveFieldType(arg.type),
+            deprecated: !!arg.deprecationReason,
+            ...(isNullableType(arg) && { nullable: true }),
+        };
     });
     return {
         type: 'object',
@@ -147,20 +157,43 @@ function resolveRequestBody(args: any[], path = '') {
     };
 }
 
-function resolveParameters(args: any[]) {
+function resolveQueryParameters(args: any[], path: string) {
     if (!args) {
         return [];
     }
+    return args
+        .filter((arg) => !isPathParam(arg, path))
+        .map((arg: any) => {
+            const hasDefaultValue = arg.defaultValue !== undefined;
+            return {
+                in: 'query',
+                name: arg.name,
+                required: isNonNullType(arg.type),
+                schema: resolveFieldType(arg.type),
+                description: arg.description,
+                ...(hasDefaultValue && { default: arg.defaultValue }),
+                deprecated: !!arg.deprecationReason,
+            };
+        });
+}
 
-    return args.map((arg: any) => {
-        return {
-            in: 'query',
-            name: arg.name,
-            required: isNonNullType(arg.type),
-            schema: resolveFieldType(arg.type),
-            description: arg.description,
-            default: arg.defaultValue,
-            deprecated: !!arg.deprecationReason,
-        };
-    });
+function resolvePathParameters(args: any[], path = '') {
+    if (!args) {
+        return [];
+    }
+    return args
+        .filter((arg) => isPathParam(arg, path))
+        .map((arg: any) => {
+            const hasDefaultValue = arg.defaultValue !== undefined;
+            return {
+                in: 'path',
+                name: arg.name,
+                // Path params are always required
+                required: true,
+                schema: resolveFieldType(arg.type),
+                description: arg.description,
+                ...(hasDefaultValue && { default: arg.defaultValue }),
+                deprecated: !!arg.deprecationReason,
+            };
+        });
 }
