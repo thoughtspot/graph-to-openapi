@@ -27,6 +27,20 @@ scalar GUID
 
 type Query {
     """
+    Sample operation to test both path param and query should work
+    """
+    restapiV2__TestUser(
+        """
+        Username of the user that you want to query.
+        """
+        name: String
+        """
+        The GUID of the user account to query
+        """
+        id: String
+    ): UserResponse
+        @rest(path: "/v2/user/{id}", method: "GET", category: "User")
+    """
     Update user info
     """
     restapiV2__updateUserInfo: Void

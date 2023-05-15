@@ -5,19 +5,19 @@ import { printSchema } from 'graphql';
 import { getOpenAPISpec } from '../src/index';
 
 describe('should generate the correct api spec', () => {
+    const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
+        loaders: [new GraphQLFileLoader()],
+    });
+    const { spec } = getOpenAPISpec({
+        schema,
+        info: {},
+        basePath: '/rest/v2',
+    });
     it('with the full schema file', () => {
-        const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
-            loaders: [new GraphQLFileLoader()],
-        });
-        const { spec } = getOpenAPISpec({
-            schema,
-            info: {},
-            basePath: '/rest/v2',
-        });
-        expect(Object.keys(spec.paths).length).toBe(93);
+        expect(Object.keys(spec.paths).length).toBe(94);
         expect(
             spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post,
-        ).toMatchObject({
+        ).toEqual({
             operationId: 'restapiV2__searchQueryData',
             description:
                 'To programmatically retrieve data from ThoughtSpot using search query string, use this endpoint',
@@ -69,21 +69,50 @@ describe('should generate the correct api spec', () => {
                                 nullableBoolType: {
                                     description:
                                         'This is an optional boolean type and is nullable',
-                                    default: undefined,
                                     type: 'boolean',
                                     deprecated: false,
                                     nullable: true,
                                 },
                             },
-                            required: ['queryString', 'dataObjectId'],
+                            required: ['queryString'],
                         },
                     },
                 },
+                required: true,
             },
+            parameters: [
+                {
+                    in: 'path',
+                    name: 'dataObjectId',
+                    required: true,
+                    schema: { type: 'string' },
+                    description:
+                        'The GUID of the data object, either a worksheet, a view, or a table.',
+
+                    deprecated: false,
+                },
+            ],
             responses: {
                 '200': {
+                    description: 'Common successful response',
                     content: {
                         'application/json': { schema: { type: 'object' } },
+                    },
+                },
+                '201': {
+                    description: 'Common error response',
+                    content: {
+                        'application/json': { schema: { type: 'object' } },
+                    },
+                },
+                '400': {
+                    description: 'Operation failed',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/ErrorResponse',
+                            },
+                        },
                     },
                 },
                 '500': {
@@ -98,11 +127,28 @@ describe('should generate the correct api spec', () => {
                 },
             },
         });
-        expect(
-            spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post
-                .requestBody.content['application/json'].schema.properties
-                .dataObjectId,
-        ).toBeUndefined();
+    });
+    it('should handle both query params and path params and not req body', () => {
+        const operation = spec.paths['/rest/v2/v2/user/{id}'].get;
+        expect(operation.parameters).toEqual([
+            {
+                in: 'query',
+                name: 'name',
+                required: false,
+                schema: { type: 'string' },
+                description: 'Username of the user that you want to query.',
+                deprecated: false,
+            },
+            {
+                in: 'path',
+                name: 'id',
+                required: true,
+                schema: { type: 'string' },
+                description: 'The GUID of the user account to query',
+                deprecated: false,
+            },
+        ]);
+        expect(operation.requestBody).toBe(undefined);
     });
 });
 describe('should generate the correct Route map', () => {
