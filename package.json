@@ -6,6 +6,7 @@
     "scripts": {
         "check": "eslint 'src/**'",
         "test": "npm run check; jest",
+        "debug" : "node --inspect-brk ./node_modules/.bin/jest --runInBand",
         "build": "tsc -p .",
         "prepublishOnly": "npm run build; npm test",
         "posttest": "cat ./coverage/lcov.info | coveralls"

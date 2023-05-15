@@ -14,7 +14,7 @@ describe('should generate the correct api spec', () => {
             info: {},
             basePath: '/rest/v2',
         });
-        expect(Object.keys(spec.paths).length).toBe(92);
+        expect(Object.keys(spec.paths).length).toBe(93);
         expect(
             spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post,
         ).toMatchObject({
@@ -104,18 +104,25 @@ describe('should generate the correct api spec', () => {
                 .dataObjectId,
         ).toBeUndefined();
     });
+});
+describe('should generate the correct Route map', () => {
+    const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
+        loaders: [new GraphQLFileLoader()],
+    });
+    const { routeMap } = getOpenAPISpec({
+        schema,
+        info: {},
+        basePath: '/rest/v2',
+    });
+    const map = routeMap as any;
     it('should convert link params from {} to :', () => {
-        const schema = loadSchemaSync(join(__dirname, 'schema.graphql'), {
-            loaders: [new GraphQLFileLoader()],
-        });
-        const { routeMap } = getOpenAPISpec({
-            schema,
-            info: {},
-            basePath: '/rest/v2',
-        });
-        const map = routeMap as any;
         expect(map['Query.restapiV2__searchQueryData'].path).toBe(
             '/v2/data/search/:dataObjectId',
         );
+    });
+
+    it('should map correct response status', () => {
+        expect(map['Query.restapiV2__updateUserInfo'].responseStatus).toBe(204);
+        expect(map['Query.restapiV2__getSessionInfo'].responseStatus).toBe(200);
     });
 });
