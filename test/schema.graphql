@@ -22,10 +22,15 @@ scalar JSON
 scalar JSONObject
 
 scalar Long
-
+scalar Void
 scalar GUID
 
 type Query {
+    """
+    Update user info
+    """
+    restapiV2__updateUserInfo: Void
+        @rest(path: "/v2/user/info", method: "GET", category: "Session")
     """
     Get Session object information
     """
