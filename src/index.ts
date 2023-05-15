@@ -4,6 +4,7 @@ import {
     isInputObjectType,
     isIntrospectionType,
     GraphQLObjectType,
+    GraphQLField,
 } from 'graphql';
 import { join } from 'path';
 import { getDirective } from '@graphql-tools/utils';
@@ -98,7 +99,18 @@ export function getOpenAPISpec({
         routeMap,
     };
 }
-
+function getResponseStatusFromOperation(
+    operation: GraphQLField<
+        any,
+        any,
+        {
+            [key: string]: any;
+        }
+    >,
+) {
+    if (operation.type.toString() === 'Void') return 204;
+    return 200;
+}
 function addPathsToSpec(
     operations: { [key: string]: any },
     spec: any,
@@ -117,9 +129,11 @@ function addPathsToSpec(
         const path = join(basePath, specInfo.path);
         const method = specInfo.method.toLowerCase();
         const useRequestBody = ['post', 'patch', 'put'].includes(method);
+        const responseStatus = getResponseStatusFromOperation(operation);
         routeMap[`${type}.${operationName}`] = {
             method,
             path: convertOpenApiPathToExpress(specInfo.path),
+            responseStatus,
         };
         spec.paths[path] = {
             [method]: buildPathFromOperation({
