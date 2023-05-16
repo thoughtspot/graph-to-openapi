@@ -32,6 +32,14 @@ export function buildPathFromOperation({
         requiredBody.required.length > 0;
     // we use query params only for get request
     // both (POST, PUT, PATCH) and GET can have pathParams
+
+    const pathArgs = operation.args.filter((arg: any) =>
+        isPathParam(arg, specInfo.path),
+    );
+    const nonPathArgs = operation.args.filter(
+        (arg: any) => !isPathParam(arg, specInfo.path),
+    );
+
     return {
         operationId: operation.name,
         description: operation.description,
@@ -41,26 +49,25 @@ export function buildPathFromOperation({
                 : [specInfo.category],
         ...(useRequestBody
             ? {
-                  requestBody: {
-                      content: {
-                          'application/json': {
-                              schema: resolveRequestBody(
-                                  operation.args,
-                                  specInfo.path,
-                              ),
+                  ...(nonPathArgs.length && {
+                      requestBody: {
+                          content: {
+                              'application/json': {
+                                  schema: resolveRequestBody(
+                                      nonPathArgs,
+                                      specInfo.path,
+                                  ),
+                              },
                           },
+                          ...(isRequired && { required: true }),
                       },
-                      ...(isRequired && { required: true }),
-                  },
-                  parameters: resolvePathParameters(
-                      operation.args,
-                      specInfo.path,
-                  ),
+                  }),
+                  parameters: resolvePathParameters(pathArgs, specInfo.path),
               }
             : {
                   parameters: [
-                      ...resolveQueryParameters(operation.args, specInfo.path),
-                      ...resolvePathParameters(operation.args, specInfo.path),
+                      ...resolveQueryParameters(nonPathArgs, specInfo.path),
+                      ...resolvePathParameters(pathArgs, specInfo.path),
                   ],
               }),
         responses: {
@@ -137,7 +144,7 @@ function resolveRequestBody(args: any[], path = '') {
     const properties: Record<string, any> = {};
     const required: string[] = [];
 
-    args.filter((arg) => !isPathParam(arg, path)).forEach((arg) => {
+    args.forEach((arg) => {
         if (isNonNullType(arg.type)) {
             required.push(arg.name);
         }
@@ -161,39 +168,35 @@ function resolveQueryParameters(args: any[], path: string) {
     if (!args) {
         return [];
     }
-    return args
-        .filter((arg) => !isPathParam(arg, path))
-        .map((arg: any) => {
-            const hasDefaultValue = arg.defaultValue !== undefined;
-            return {
-                in: 'query',
-                name: arg.name,
-                required: isNonNullType(arg.type),
-                schema: resolveFieldType(arg.type),
-                description: arg.description,
-                ...(hasDefaultValue && { default: arg.defaultValue }),
-                deprecated: !!arg.deprecationReason,
-            };
-        });
+    return args.map((arg: any) => {
+        const hasDefaultValue = arg.defaultValue !== undefined;
+        return {
+            in: 'query',
+            name: arg.name,
+            required: isNonNullType(arg.type),
+            schema: resolveFieldType(arg.type),
+            description: arg.description,
+            ...(hasDefaultValue && { default: arg.defaultValue }),
+            deprecated: !!arg.deprecationReason,
+        };
+    });
 }
 
 function resolvePathParameters(args: any[], path = '') {
     if (!args) {
         return [];
     }
-    return args
-        .filter((arg) => isPathParam(arg, path))
-        .map((arg: any) => {
-            const hasDefaultValue = arg.defaultValue !== undefined;
-            return {
-                in: 'path',
-                name: arg.name,
-                // Path params are always required
-                required: true,
-                schema: resolveFieldType(arg.type),
-                description: arg.description,
-                ...(hasDefaultValue && { default: arg.defaultValue }),
-                deprecated: !!arg.deprecationReason,
-            };
-        });
+    return args.map((arg: any) => {
+        const hasDefaultValue = arg.defaultValue !== undefined;
+        return {
+            in: 'path',
+            name: arg.name,
+            // Path params are always required
+            required: true,
+            schema: resolveFieldType(arg.type),
+            description: arg.description,
+            ...(hasDefaultValue && { default: arg.defaultValue }),
+            deprecated: !!arg.deprecationReason,
+        };
+    });
 }
