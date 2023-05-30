@@ -22,14 +22,6 @@ export function buildPathFromOperation({
         operation,
         'example',
     )?.[0];
-    const requiredBody = resolveRequestBody(
-        operation.args,
-        specInfo.path,
-    ) as any;
-    const isRequired =
-        requiredBody &&
-        requiredBody.required &&
-        requiredBody.required.length > 0;
     // we use query params only for get request
     // both (POST, PUT, PATCH) and GET can have pathParams
 
@@ -39,6 +31,12 @@ export function buildPathFromOperation({
     const nonPathArgs = operation.args.filter(
         (arg: any) => !isPathParam(arg, specInfo.path),
     );
+
+    const requiredBody = resolveRequestBody(nonPathArgs, specInfo.path) as any;
+    const isRequired =
+        requiredBody !== undefined &&
+        requiredBody.required !== undefined &&
+        requiredBody.required.length > 0;
 
     return {
         operationId: operation.name,
@@ -59,7 +57,7 @@ export function buildPathFromOperation({
                                   ),
                               },
                           },
-                          ...(isRequired && { required: true }),
+                          ...(isRequired ? { required: true } : {}),
                       },
                   }),
                   parameters: resolvePathParameters(pathArgs, specInfo.path),

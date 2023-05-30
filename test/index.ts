@@ -14,7 +14,7 @@ describe('should generate the correct api spec', () => {
         basePath: '/rest/v2',
     });
     it('with the full schema file', () => {
-        expect(Object.keys(spec.paths).length).toBe(94);
+        expect(Object.keys(spec.paths).length).toBe(95);
         expect(
             spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post,
         ).toEqual({
@@ -74,11 +74,9 @@ describe('should generate the correct api spec', () => {
                                     nullable: true,
                                 },
                             },
-                            required: ['queryString'],
                         },
                     },
                 },
-                required: true,
             },
             parameters: [
                 {
@@ -127,6 +125,12 @@ describe('should generate the correct api spec', () => {
                 },
             },
         });
+
+        // since to requited params are there
+        expect(
+            spec.paths['/rest/v2/v2/data/search/{dataObjectId}'].post
+                .requestBody.required,
+        ).toEqual(undefined);
     });
     it('should handle both query params and path params and not req body', () => {
         const operation = spec.paths['/rest/v2/v2/user/{id}'].get;
@@ -149,6 +153,11 @@ describe('should generate the correct api spec', () => {
             },
         ]);
         expect(operation.requestBody).toBe(undefined);
+    });
+
+    it('should have required as true when even one param is required', () => {
+        const operation = spec.paths['/rest/v2/v2/test/required'].post;
+        expect(operation.requestBody.required).toBe(true);
     });
 });
 describe('should generate the correct Route map', () => {

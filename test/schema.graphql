@@ -396,7 +396,7 @@ type Query {
         """
         The data search query string. Example: [revenue] > 1000 [ship mode] = 'air'
         """
-        queryString: String!
+        queryString: String
         """
         The GUID of the data object, either a worksheet, a view, or a table.
         """
@@ -703,6 +703,16 @@ type Query {
 }
 
 type Mutation {
+    """
+    Sample operation to test both path param and query should work
+    """
+    restapiV2__TestRequired(
+        """
+        Username of the user that you want to query.
+        """
+        name: String!
+    ): UserResponse
+        @rest(path: "/v2/test/required", method: "POST", category: "User")
     """
     You can programmatically create login session for a user in ThoughtSpot using this endpoint.
 
