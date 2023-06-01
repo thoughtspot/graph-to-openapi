@@ -33,11 +33,11 @@ type Query {
         """
         Username of the user that you want to query.
         """
-        name: String
+        name: String @deprecated(reason: "Query param deprecated")
         """
         The GUID of the user account to query
         """
-        id: String
+        id: String @deprecated(reason: "Path param deprecated")
     ): UserResponse
         @rest(path: "/v2/user/{id}", method: "GET", category: "User")
     """
@@ -203,12 +203,14 @@ type Query {
         A JSON array of name or GUID of the user or both who last modified the object. When both are given then id is considered.
         """
         lastModifiedBy: [NameAndIdInput]
+            @deprecated(reason: "This argument is deprecated")
     ): JSON
         @rest(
             path: "/v2/metadata/header/search"
             method: "POST"
             category: "Metadata"
         )
+        @deprecated(reason: "This argument is deprecated")
     """
     Use this endpoint to get header details of visualization charts for a given liveboard or answer. At least one of id or name of liveboard or answer is required. When both are given, then id will be considered.
     """

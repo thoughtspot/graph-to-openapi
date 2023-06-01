@@ -41,6 +41,11 @@ export function buildPathFromOperation({
     return {
         operationId: operation.name,
         description: operation.description,
+        ...(operation.deprecationReason
+            ? {
+                  deprecated: true,
+              }
+            : {}),
         tags:
             apiDirective && apiDirective.minVersion
                 ? [specInfo.category, apiDirective.minVersion]
@@ -151,7 +156,11 @@ function resolveRequestBody(args: any[], path = '') {
             description: arg.description,
             ...(hasDefaultValue && { default: arg.defaultValue }),
             ...resolveFieldType(arg.type),
-            deprecated: !!arg.deprecationReason,
+            ...(arg.deprecationReason
+                ? {
+                      deprecated: true,
+                  }
+                : {}),
             ...(isNullableType(arg) && { nullable: true }),
         };
     });
@@ -175,7 +184,11 @@ function resolveQueryParameters(args: any[], path: string) {
             schema: resolveFieldType(arg.type),
             description: arg.description,
             ...(hasDefaultValue && { default: arg.defaultValue }),
-            deprecated: !!arg.deprecationReason,
+            ...(arg.deprecationReason
+                ? {
+                      deprecated: true,
+                  }
+                : {}),
         };
     });
 }
@@ -194,7 +207,11 @@ function resolvePathParameters(args: any[], path = '') {
             schema: resolveFieldType(arg.type),
             description: arg.description,
             ...(hasDefaultValue && { default: arg.defaultValue }),
-            deprecated: !!arg.deprecationReason,
+            ...(arg.deprecationReason
+                ? {
+                      deprecated: true,
+                  }
+                : {}),
         };
     });
 }
