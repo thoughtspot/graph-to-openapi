@@ -34,7 +34,6 @@ describe('should generate the correct api spec', () => {
                                     default: -1,
                                     type: 'integer',
                                     format: 'int32',
-                                    deprecated: false,
                                 },
                                 batchNumber: {
                                     description:
@@ -42,7 +41,6 @@ describe('should generate the correct api spec', () => {
                                     default: -1,
                                     type: 'integer',
                                     format: 'int32',
-                                    deprecated: false,
                                 },
                                 batchSize: {
                                     description:
@@ -50,13 +48,11 @@ describe('should generate the correct api spec', () => {
                                     default: -1,
                                     type: 'integer',
                                     format: 'int32',
-                                    deprecated: false,
                                 },
                                 queryString: {
                                     description:
                                         "The data search query string. Example: [revenue] > 1000 [ship mode] = 'air'",
                                     type: 'string',
-                                    deprecated: false,
                                 },
                                 formatType: {
                                     description:
@@ -64,13 +60,12 @@ describe('should generate the correct api spec', () => {
                                     default: 'COMPACT',
                                     type: 'string',
                                     enum: ['COMPACT', 'FULL'],
-                                    deprecated: false,
                                 },
                                 nullableBoolType: {
                                     description:
                                         'This is an optional boolean type and is nullable',
                                     type: 'boolean',
-                                    deprecated: false,
+
                                     nullable: true,
                                 },
                             },
@@ -86,8 +81,6 @@ describe('should generate the correct api spec', () => {
                     schema: { type: 'string' },
                     description:
                         'The GUID of the data object, either a worksheet, a view, or a table.',
-
-                    deprecated: false,
                 },
             ],
             responses: {
@@ -141,7 +134,7 @@ describe('should generate the correct api spec', () => {
                 required: false,
                 schema: { type: 'string' },
                 description: 'Username of the user that you want to query.',
-                deprecated: false,
+                deprecated: true,
             },
             {
                 in: 'path',
@@ -149,15 +142,26 @@ describe('should generate the correct api spec', () => {
                 required: true,
                 schema: { type: 'string' },
                 description: 'The GUID of the user account to query',
-                deprecated: false,
+                deprecated: true,
             },
         ]);
         expect(operation.requestBody).toBe(undefined);
     });
-
     it('should have required as true when even one param is required', () => {
         const operation = spec.paths['/rest/v2/v2/test/required'].post;
         expect(operation.requestBody.required).toBe(true);
+    });
+    it('should handle req deprecated directive', () => {
+        const postOperation =
+            spec.paths['/rest/v2/v2/metadata/header/search'].post;
+        expect(postOperation.deprecated).toBe(true);
+        expect(
+            postOperation.requestBody.content['application/json'].schema
+                .properties.lastModifiedBy.deprecated,
+        ).toBe(true);
+        const getOperation = spec.paths['/rest/v2/v2/user/{id}'].get;
+        expect(getOperation.parameters[0].deprecated).toBe(true);
+        expect(getOperation.parameters[1].deprecated).toBe(true);
     });
 });
 describe('should generate the correct Route map', () => {
