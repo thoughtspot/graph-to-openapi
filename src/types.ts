@@ -43,13 +43,15 @@ export function buildSchemaObjectFromType(
 }
 
 function resolveField(field: GraphQLField<any, any> | GraphQLInputField) {
+    if ('defaultValue' in field)
+        return resolveFieldType(field.type, field?.defaultValue);
     return resolveFieldType(field.type);
 }
 
 // array -> [type]
 // type -> $ref
 // scalar -> swagger primitive
-export function resolveFieldType(type: GraphQLType): any {
+export function resolveFieldType(type: GraphQLType, defaultValue?: any): any {
     if (isNonNullType(type)) {
         return resolveFieldType(type.ofType);
     }
@@ -58,6 +60,7 @@ export function resolveFieldType(type: GraphQLType): any {
         return {
             type: 'array',
             items: resolveFieldType(type.ofType),
+            ...(defaultValue !== undefined ? { default: defaultValue } : {}),
         };
     }
 
@@ -71,17 +74,26 @@ export function resolveFieldType(type: GraphQLType): any {
     }
 
     if (isScalarType(type)) {
-        return (
-            mapToPrimitive(type.name) || {
-                type: 'object',
-            }
-        );
+        return mapToPrimitive(type.name)
+            ? {
+                  ...mapToPrimitive(type.name),
+                  ...(defaultValue !== undefined
+                      ? { default: defaultValue }
+                      : {}),
+              }
+            : {
+                  type: 'object',
+                  ...(defaultValue !== undefined
+                      ? { default: defaultValue }
+                      : {}),
+              };
     }
 
     if (isEnumType(type)) {
         return {
             type: 'string',
             enum: type.astNode?.values?.map((value) => value.name.value),
+            ...(defaultValue !== undefined ? { default: defaultValue } : {}),
         };
     }
 
