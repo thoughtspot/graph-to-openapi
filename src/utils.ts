@@ -17,6 +17,19 @@ export function mapToPrimitive(type: string) {
         ID: {
             type: 'string',
         },
+        StringBooleanNumber: {
+            "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+        }
     };
 
     return formatMap[type];
