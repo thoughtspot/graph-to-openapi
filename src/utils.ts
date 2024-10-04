@@ -20,16 +20,16 @@ export function mapToPrimitive(type: string) {
         StringBooleanNumber: {
             anyOf: [
                 {
-                  type: 'string'
+                    type: 'string',
                 },
                 {
-                  type: 'boolean'
+                    type: 'boolean',
                 },
                 {
-                  type: 'number'
-                }
-              ]
-        }
+                    type: 'number',
+                },
+            ],
+        },
     };
 
     return formatMap[type];
