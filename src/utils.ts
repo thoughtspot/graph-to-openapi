@@ -18,15 +18,15 @@ export function mapToPrimitive(type: string) {
             type: 'string',
         },
         StringBooleanNumber: {
-            "anyOf": [
+            anyOf: [
                 {
-                  "type": "string"
+                  type: 'string'
                 },
                 {
-                  "type": "boolean"
+                  type: 'boolean'
                 },
                 {
-                  "type": "number"
+                  type: 'number'
                 }
               ]
         }
