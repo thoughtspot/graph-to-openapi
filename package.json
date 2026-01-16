@@ -28,7 +28,7 @@
     },
     "homepage": "https://github.com/thoughtspot/graph-to-openapi#readme",
     "dependencies": {
-        "@graphql-tools/load": "^7.7.0",
+        "@graphql-tools/load": "^8.1.7",
         "@graphql-tools/schema": "^8.5.0",
         "@graphql-tools/utils": "^8.8.0",
         "graphql": "^16.9.0",
